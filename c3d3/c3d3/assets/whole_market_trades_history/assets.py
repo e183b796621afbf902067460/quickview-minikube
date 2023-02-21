@@ -6,7 +6,6 @@ import pandas as pd
 
 from c3tl.abstract.fabric import c3Abstract
 from c3tl.bridge.configurator import C3BridgeConfigurator
-from trad3r.root.composite.trader import rootTrad3r
 
 
 @asset(
