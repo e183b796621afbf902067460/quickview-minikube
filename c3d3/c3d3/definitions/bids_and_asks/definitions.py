@@ -3,7 +3,7 @@ from dagster import Definitions, AssetsDefinition
 from c3d3.assets.bids_and_asks.assets import get_overview
 from c3d3.ops.bids_and_asks.ops import extract_from_d3vault, load_to_dwh
 from c3d3.jobs.bids_and_asks.jobs import dag
-from c3d3.schedules.bids_and_asks.schedules import every_15th_minute
+from c3d3.schedules.bids_and_asks.schedules import every_30th_minute
 from c3d3.resources.d3vault.resource import d3vault
 from c3d3.resources.logger.resource import logger
 from c3d3.resources.dwh.resource import dwh
@@ -27,5 +27,5 @@ bids_and_asks = Definitions(
         'df_serializer': df_serializer,
         'w3sleep': w3sleep
     },
-    schedules=[every_15th_minute]
+    schedules=[every_30th_minute]
 )
