@@ -3,10 +3,10 @@ run_storage:
   class: PostgresRunStorage
   config:
     postgres_db:
-      username: c3d3-dagster-postgres
-      password: c3d3-dagster-postgres
-      hostname: c3d3-dagster-postgres
-      db_name: c3d3-dagster-postgres
+      username: c3d3-dagster-research-postgres
+      password: c3d3-dagster-research-postgres
+      hostname: c3d3-dagster-research-postgres
+      db_name: c3d3-dagster-research-postgres
       port: 5432
 
 event_log_storage:
@@ -14,10 +14,10 @@ event_log_storage:
   class: PostgresEventLogStorage
   config:
     postgres_db:
-      username: c3d3-dagster-postgres
-      password: c3d3-dagster-postgres
-      hostname: c3d3-dagster-postgres
-      db_name: c3d3-dagster-postgres
+      username: c3d3-dagster-research-postgres
+      password: c3d3-dagster-research-postgres
+      hostname: c3d3-dagster-research-postgres
+      db_name: c3d3-dagster-research-postgres
       port: 5432
 
 schedule_storage:
@@ -25,10 +25,10 @@ schedule_storage:
   class: PostgresScheduleStorage
   config:
     postgres_db:
-      username: c3d3-dagster-postgres
-      password: c3d3-dagster-postgres
-      hostname: c3d3-dagster-postgres
-      db_name: c3d3-dagster-postgres
+      username: c3d3-dagster-research-postgres
+      password: c3d3-dagster-research-postgres
+      hostname: c3d3-dagster-research-postgres
+      db_name: c3d3-dagster-research-postgres
       port: 5432
 
 run_coordinator:
