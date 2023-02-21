@@ -1,0 +1,50 @@
+run_storage:
+  module: dagster_postgres.run_storage
+  class: PostgresRunStorage
+  config:
+    postgres_db:
+      username: c3d3-dagster-postgres
+      password: c3d3-dagster-postgres
+      hostname: c3d3-dagster-postgres
+      db_name: c3d3-dagster-postgres
+      port: 5432
+
+event_log_storage:
+  module: dagster_postgres.event_log
+  class: PostgresEventLogStorage
+  config:
+    postgres_db:
+      username: c3d3-dagster-postgres
+      password: c3d3-dagster-postgres
+      hostname: c3d3-dagster-postgres
+      db_name: c3d3-dagster-postgres
+      port: 5432
+
+schedule_storage:
+  module: dagster_postgres.schedule_storage
+  class: PostgresScheduleStorage
+  config:
+    postgres_db:
+      username: c3d3-dagster-postgres
+      password: c3d3-dagster-postgres
+      hostname: c3d3-dagster-postgres
+      db_name: c3d3-dagster-postgres
+      port: 5432
+
+run_coordinator:
+  module: dagster.core.run_coordinator
+  class: QueuedRunCoordinator
+  config:
+    max_concurrent_runs: 2
+    dequeue_use_threads: true
+    dequeue_num_workers: 2
+
+telemetry:
+  enabled: false
+
+nux:
+  enabled: false
+
+schedules:
+  use_threads: true
+

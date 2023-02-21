@@ -1,0 +1,53 @@
+version: "3"
+
+services:
+
+  c3d3-dagster-research-dagit:
+    build:
+      context: ./c3d3
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    env_file:
+      - c3d3/.env
+    command: "dagit -w workspace.yaml -h 0.0.0.0 -p 3000"
+    depends_on:
+      - c3d3-dagster-research-postgres
+    restart: always
+    networks:
+      - c3d3_research_network
+
+  c3d3-dagster-research-daemon:
+    build:
+      context: ./c3d3
+      dockerfile: Dockerfile
+    env_file:
+      - c3d3/.env
+    command: "dagster-daemon run -w workspace.yaml"
+    depends_on:
+      - c3d3-dagster-research-postgres
+    restart: always
+    networks:
+      - c3d3_research_network
+
+  c3d3-dagster-research-postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_HOST: 0.0.0.0
+      POSTGRES_USER: c3d3-dagster-research-postgres
+      POSTGRES_PASSWORD: c3d3-dagster-research-postgres
+      POSTGRES_DB: c3d3-dagster-research-postgres
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "c3d3-dagster-research-postgres" ]
+      interval: 5s
+      retries: 5
+    restart: always
+    ports:
+      - '5435:5432'
+    volumes:
+      - ./c3d3-dagster-research-postgres:/var/lib/postgresql/data
+    networks:
+      - c3d3_research_network
+
+networks:
+  c3d3_research_network:

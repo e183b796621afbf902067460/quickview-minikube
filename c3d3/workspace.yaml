@@ -1,0 +1,7 @@
+load_from:
+  - python_file:
+      relative_path: c3d3/definitions/bids_and_asks/definitions.py
+      attribute: bids_and_asks
+  - python_file:
+      relative_path: c3d3/definitions/whole_market_trades_history/definitions.py
+      attribute: whole_market_trades_history
