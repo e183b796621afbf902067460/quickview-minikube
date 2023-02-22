@@ -9,9 +9,9 @@ ENV DAGSTER_HOME=/opt/dagster/app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
+COPY c3d3 ./c3d3
 COPY workspace.yaml ./
 COPY dagster.yaml ./
-COPY c3d3 ./c3d3
 
 RUN pip install git+https://github.com/e183b796621afbf902067460/raffaelo.git#egg=raffaelo
 RUN pip install git+https://github.com/e183b796621afbf902067460/medici.git#egg=medici
