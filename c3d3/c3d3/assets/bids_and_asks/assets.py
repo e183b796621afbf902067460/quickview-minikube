@@ -84,6 +84,7 @@ def get_overview(context, configs: dict) -> List[list]:
                 api_key=context.resources.fernet.decrypt(configs['network_api_key'].encode()).decode(),
                 block_limit=configs['network_block_limit'],
                 gas_symbol=configs['native_chain_token'],
+                chain=configs['network_name'],
                 trader=rootTrad3r
             )
             overview: List[dict] = handler.get_overview(
