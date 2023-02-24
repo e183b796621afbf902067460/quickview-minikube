@@ -68,6 +68,8 @@ def get_overview(context, configs: dict) -> List[list]:
             h_network_name = '{configs['network_name']}'
     ''').result_rows[0][0]
     previous = previous if previous.strftime('%Y') != '1970' or not previous else now - datetime.timedelta(minutes=5)
+    if now - previous > datetime.timedelta(hours=1):
+        previous = now - datetime.timedelta(minutes=30)
     context.resources.logger.info(f"Current previous timestamp: {previous}")
     while True:
         try:
