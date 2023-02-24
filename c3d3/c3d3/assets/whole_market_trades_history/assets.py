@@ -68,7 +68,7 @@ def get_overview(context, configs: dict) -> List[list]:
                 end=now,
                 ticker=configs['ticker_name']
             )
-        except requests.exceptions.ConnectionError:
+        except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError):
             context.resources.w3sleep.sleep()
         else:
             break
