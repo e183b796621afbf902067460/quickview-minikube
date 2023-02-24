@@ -3,8 +3,8 @@ from dagster import ScheduleDefinition
 from c3d3.jobs.whole_market_trades_history.jobs import dag
 
 
-every_15th_minute = ScheduleDefinition(
+every_30th_minute = ScheduleDefinition(
     name='whole_market_trades_history',
     job=dag,
-    cron_schedule="*/15 * * * *"
+    cron_schedule="*/30 * * * *"
 )

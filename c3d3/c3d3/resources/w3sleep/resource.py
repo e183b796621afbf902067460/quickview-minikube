@@ -4,7 +4,7 @@ from dagster import resource
 
 
 MAX_BACKOFF = 64
-MAX_RETRIES = 8
+MAX_RETRIES = 12
 
 
 class W3Sleep:
