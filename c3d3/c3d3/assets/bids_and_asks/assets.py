@@ -35,19 +35,23 @@ def get_overview(context, configs: dict) -> List[list]:
             columns={
                 'pool_address': 'h_pool_address',
                 'network_name': 'h_network_name',
-                'native_chain_token': 'h_native_chain_token',
                 'protocol_name': 'h_protocol_name',
                 'symbol': 'pit_symbol',
-                'bid': 'pit_bid',
-                'ask': 'pit_ask',
                 'price': 'pit_price',
                 'sender': 'pit_sender',
+                'recipient': 'pit_recipient',
                 'amount0': 'pit_amount0',
                 'amount1': 'pit_amount1',
+                'decimals0': 'pit_decimals0',
+                'decimals1': 'pit_decimals1',
+                'reserve0': 'pit_reserve0',
+                'reserve1': 'pit_reserve1',
+                'sqrt_p': 'pit_sqrt_p',
+                'liquidity': 'pit_liquidity',
+                'fee': 'pit_fee',
                 'gas_used': 'pit_gas_used',
                 'effective_gas_price': 'pit_effective_gas_price',
                 'gas_symbol': 'pit_gas_symbol',
-                'gas_price': 'pit_gas_price',
                 'index_position_in_the_block': 'pit_index_position_in_the_block',
                 'tx_hash': 'pit_tx_hash',
                 'time': 'pit_ts'
@@ -92,7 +96,7 @@ def get_overview(context, configs: dict) -> List[list]:
             overview: List[dict] = handler.get_overview(
                 start=previous,
                 end=now,
-                is_reverse=False
+                is_reverse=configs['is_reverse']
             )
         except ValueError:
             context.resources.w3sleep.sleep()
