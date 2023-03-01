@@ -19,6 +19,15 @@ from c3d3.resources.w3sleep.resource import w3sleep
         'fernet': fernet,
         'df_serializer': df_serializer,
         'w3sleep': w3sleep
+    },
+    config={
+        "execution": {
+            "config": {
+                "multiprocess": {
+                    "max_concurrent": 2,
+                },
+            }
+        }
     }
 )
 def dag():
