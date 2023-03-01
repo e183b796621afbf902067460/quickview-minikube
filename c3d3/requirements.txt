@@ -3,6 +3,7 @@ dagit>=1.1.14
 dagster-postgres>=0.17.13
 psycopg2-binary>=2.9.5
 clickhouse-connect>=0.5.7
+pandahouse>=0.2.7
 clickhouse-sqlalchemy>=0.2.3
 pytest>=7.2.0
 cryptography>=39.0.0

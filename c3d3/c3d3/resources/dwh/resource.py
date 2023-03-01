@@ -2,6 +2,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
 import clickhouse_connect
 from sqlalchemy.orm import Session
+import pandahouse as ph
+import pandas as pd
 from dagster import resource
 
 import os
@@ -28,6 +30,16 @@ class DataWarehouse:
         )
 
     @classmethod
+    def get_connection(cls):
+        return dict(
+            database=cls.DB_NAME,
+            host=cls.DB_ADDRESS,
+            user=cls.DB_USER,
+            password=cls.DB_PASSWORD,
+            port=cls.DB_PORT
+        )
+
+    @classmethod
     def get_session(cls) -> Session:
         s = Session(cls.get_engine())
         try:
@@ -45,6 +57,10 @@ class DataWarehouse:
 
     def read(self, query, *args, **kwargs):
         return self.get_engine().execute(query).fetchall()
+
+    @classmethod
+    def load(cls, df: pd.DataFrame, table: str) -> None:
+        ph.to_clickhouse(df=df, table=table, index=False, connection=cls.get_connection(), chunksize=1000000)
 
 
 @resource
