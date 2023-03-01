@@ -90,7 +90,7 @@ def load_to_dwh(context, df: List[list]) -> None:
         mini_df = context.resources.df_serializer.df_from_list(mini_df)
         concat_df = concat_df.append(mini_df, ignore_index=True)
         context.resources.logger.info(mini_df.head())
-    context.resources.dwh.get_client().insert_df(
+    context.resources.dwh.get_client().insert(
         table='pit_big_table_bids_and_asks',
-        df=concat_df
+        data=concat_df.to_numpy()
     )
