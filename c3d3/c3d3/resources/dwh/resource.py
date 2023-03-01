@@ -33,10 +33,9 @@ class DataWarehouse:
     def get_connection(cls):
         return dict(
             database=cls.DB_NAME,
-            host=cls.DB_ADDRESS,
+            host=f'http://{cls.DB_ADDRESS}:{cls.DB_PORT}',
             user=cls.DB_USER,
-            password=cls.DB_PASSWORD,
-            port=cls.DB_PORT
+            password=cls.DB_PASSWORD
         )
 
     @classmethod
