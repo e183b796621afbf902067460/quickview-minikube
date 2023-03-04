@@ -60,7 +60,7 @@ def load_to_dwh(context, df: List[list]) -> None:
     for mini_df in df:
         mini_df = context.resources.df_serializer.df_from_list(mini_df)
         concat_df = concat_df.append(mini_df, ignore_index=True)
-        context.resources.logger.info(mini_df.head())
+        context.resources.logger.info(mini_df.info())
     context.resources.dwh.get_client().insert_df(
         table='pit_big_table_whole_market_trades_history',
         df=concat_df
