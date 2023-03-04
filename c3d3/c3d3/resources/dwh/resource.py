@@ -56,7 +56,7 @@ class DataWarehouse:
 
     @classmethod
     def load(cls, df: pd.DataFrame, table: str) -> None:
-        ph.to_clickhouse(df=df, table=table, index=False, connection=cls.get_connection(), chunksize=1000000)
+        cls.get_client().insert_df(table=table, df=df)
 
 
 @resource
