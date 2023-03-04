@@ -85,13 +85,17 @@ def extract_from_d3vault(context) -> List[dict]:
     }
 )
 def load_to_dwh(context, df: List[list]) -> None:
-    concat_df = pd.DataFrame()
+    v2 = pd.DataFrame()
+    v3 = pd.DataFrame()
     for mini_df in df:
         mini_df = context.resources.df_serializer.df_from_list(mini_df)
-        concat_df = concat_df.append(mini_df, ignore_index=True)
+        if 'pit_reserve0' in list(mini_df.columns) and 'pit_reserve1' in list(mini_df.columns):
+            v2 = v2.append(mini_df, ignore_index=True)
+        else:
+            v3 = v3.append(mini_df, ignore_index=True)
         context.resources.logger.info(mini_df.dtypes)
-    concat_df = concat_df.astype({'pit_reserve0': int, 'pit_amount0': int, 'pit_reserve1': int, 'pit_amount1': int, 'pit_sqrt_p': int, 'pit_liquidity': int}, errors='ignore')
-    context.resources.dwh.load(
-        table='pit_big_table_bids_and_asks',
-        df=concat_df
-    )
+    for load_df in [v2, v3]:
+        context.resources.dwh.load(
+            table='pit_big_table_bids_and_asks',
+            df=load_df
+        )
