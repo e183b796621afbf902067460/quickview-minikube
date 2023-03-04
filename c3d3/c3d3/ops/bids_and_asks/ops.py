@@ -90,6 +90,7 @@ def load_to_dwh(context, df: List[list]) -> None:
         mini_df = context.resources.df_serializer.df_from_list(mini_df)
         concat_df = concat_df.append(mini_df, ignore_index=True)
         context.resources.logger.info(mini_df.dtypes)
+    concat_df = concat_df.astype({'pit_reserve0': int, 'pit_amount0': int})
     context.resources.dwh.load(
         table='pit_big_table_bids_and_asks',
         df=concat_df
