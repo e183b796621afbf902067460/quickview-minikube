@@ -95,7 +95,4 @@ def load_to_dwh(context, df: List[list]) -> None:
             v3 = v3.append(mini_df, ignore_index=True)
         context.resources.logger.info(mini_df.dtypes)
     for load_df in [v2, v3]:
-        context.resources.dwh.load(
-            table='pit_big_table_bids_and_asks',
-            df=load_df
-        )
+        load_df.to_sql(name='pit_big_table_bids_and_asks', con=context.resources.dwh.get_engine(), if_exists='append', index=False)
