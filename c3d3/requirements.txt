@@ -1,6 +1,7 @@
 dagster>=1.2.0
 dagit>=1.2.0
-protobuf>=4.21.1
+grpcio-tools==1.44.0
+protobuf==4.22.0
 dagster-postgres>=0.17.13
 pandas>=1.5.3
 clickhouse-sqlalchemy>=0.2.3
