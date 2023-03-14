@@ -24,7 +24,7 @@ from c3d3.resources.w3sleep.resource import w3sleep
         "execution": {
             "config": {
                 "multiprocess": {
-                    "max_concurrent": 2,
+                    "max_concurrent": 4,
                 },
             }
         }
