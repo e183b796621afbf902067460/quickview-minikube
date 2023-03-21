@@ -1,0 +1,4 @@
+execution:
+  celery:
+    broker:
+      env: pyamqp://rabbitmq:rabbitmq@rabbitmq:5672/rabbitmq

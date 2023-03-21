@@ -2,7 +2,7 @@ version: "3"
 
 services:
 
-  c3d3-dagster-research-dagit:
+  dagit:
     build:
       context: ./c3d3
       dockerfile: Dockerfile
@@ -12,12 +12,12 @@ services:
       - c3d3/.env
     command: "dagit -w workspace.yaml -h 0.0.0.0 -p 3000"
     depends_on:
-      - c3d3-dagster-research-postgres
+      - postgres
     restart: always
     networks:
-      - c3d3_research_network
+      - c3d3
 
-  c3d3-dagster-research-daemon:
+  daemon:
     build:
       context: ./c3d3
       dockerfile: Dockerfile
@@ -25,29 +25,76 @@ services:
       - c3d3/.env
     command: "dagster-daemon run -w workspace.yaml"
     depends_on:
-      - c3d3-dagster-research-postgres
+      - postgres
     restart: always
     networks:
-      - c3d3_research_network
+      - c3d3
 
-  c3d3-dagster-research-postgres:
+  postgres:
     image: postgres:13
     environment:
       POSTGRES_HOST: 0.0.0.0
-      POSTGRES_USER: c3d3-dagster-research-postgres
-      POSTGRES_PASSWORD: c3d3-dagster-research-postgres
-      POSTGRES_DB: c3d3-dagster-research-postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "c3d3-dagster-research-postgres" ]
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
       interval: 5s
       retries: 5
     restart: always
     ports:
       - '5435:5432'
     volumes:
-      - ./c3d3-dagster-research-postgres:/var/lib/postgresql/data
+      - ./postgres:/var/lib/postgresql/data
     networks:
-      - c3d3_research_network
+      - c3d3
+
+  rabbitmq:
+    image: rabbitmq:3.11-management-alpine
+    networks:
+      - c3d3
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq/
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+      RABBITMQ_DEFAULT_VHOST: rabbitmq
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "0.0.0.0", "5672" ]
+      interval: 5s
+      timeout: 15s
+      retries: 3
+
+  flower:
+    image: mher/flower:1.2.0
+    ports:
+      - '5555:5555'
+    environment:
+      CELERY_BROKER_URL: pyamqp://rabbitmq:rabbitmq@rabbitmq:5672/rabbitmq
+      FLOWER_PORT: 5555
+    networks:
+      - c3d3
+    depends_on:
+      - rabbitmq
+
+  worker:
+    build:
+      context: ./c3d3
+      dockerfile: Dockerfile
+    entrypoint: [ "dagster-celery", "worker", "start", "--loglevel=info", "-A", "celery.app", "-y", "celery.yaml" ]
+    restart: always
+    ports:
+      - '4000:4000'
+    env_file:
+      - c3d3/.env
+    networks:
+      - c3d3
+    depends_on:
+      - postgres
+      - rabbitmq
 
 networks:
-  c3d3_research_network:
+  c3d3:

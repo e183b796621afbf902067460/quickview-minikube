@@ -1,13 +1,14 @@
 from dagster import job
+from dagster_celery import celery_executor
 
-from c3d3.assets.bids_and_asks.assets import get_overview
-from c3d3.ops.bids_and_asks.ops import extract_from_d3vault, load_to_dwh
-from c3d3.resources.d3vault.resource import d3vault
-from c3d3.resources.logger.resource import logger
-from c3d3.resources.dwh.resource import dwh
-from c3d3.resources.fernet.resource import fernet
-from c3d3.resources.serializers.resource import df_serializer
-from c3d3.resources.w3sleep.resource import w3sleep
+from etl.assets.bids_and_asks.assets import get_overview
+from etl.ops.bids_and_asks.ops import extract_from_d3vault, load_to_dwh
+from etl.resources.d3vault.resource import d3vault
+from etl.resources.logger.resource import logger
+from etl.resources.dwh.resource import dwh
+from etl.resources.fernet.resource import fernet
+from etl.resources.serializers.resource import df_serializer
+from etl.resources.w3sleep.resource import w3sleep
 
 
 @job(
@@ -28,15 +29,12 @@ from c3d3.resources.w3sleep.resource import w3sleep
                 },
             }
         }
-    }
+    },
+    executor_def=celery_executor
 )
 def dag():
     configs = extract_from_d3vault()
     overviews = configs.map(get_overview)
     load_to_dwh(overviews.collect())
 
-
-if __name__ == "__main__":
-    result = dag.execute_in_process()
-    print(result)
 
