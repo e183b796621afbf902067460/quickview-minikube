@@ -61,7 +61,7 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: rabbitmq
       RABBITMQ_DEFAULT_PASS: rabbitmq
-      RABBITMQ_DEFAULT_VHOST: rabbitmq
+      RABBITMQ_DEFAULT_VHOST: dagster
     healthcheck:
       test: [ "CMD", "nc", "-z", "0.0.0.0", "5672" ]
       interval: 5s
@@ -73,7 +73,7 @@ services:
     ports:
       - '5555:5555'
     environment:
-      CELERY_BROKER_URL: pyamqp://rabbitmq:rabbitmq@rabbitmq:5672/rabbitmq
+      CELERY_BROKER_URL: pyamqp://rabbitmq:rabbitmq@rabbitmq:5672/dagster
       FLOWER_PORT: 5555
     networks:
       - c3d3
