@@ -92,9 +92,6 @@ services:
       - c3d3/.env
     networks:
       - c3d3
-    depends_on:
-      - postgres
-      - rabbitmq
 
 networks:
   c3d3:
