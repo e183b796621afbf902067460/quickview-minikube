@@ -61,10 +61,7 @@ def extract_from_d3vault(context) -> List[dict]:
             {
                 'pool_address': pool_address,
                 'network_name': network_name,
-                'native_chain_token': native_chain_token,
                 'network_rpc_node': network_rpc_node,
-                'network_block_limit': network_block_limit,
-                'network_uri': network_uri,
                 'network_api_key': network_api_key,
                 'protocol_name': protocol_name,
                 'is_reverse': is_reverse
@@ -89,5 +86,4 @@ def load_to_dwh(context, df: List[list]) -> None:
     for mini_df in df:
         mini_df = context.resources.df_serializer.df_from_list(mini_df)
         concat_df = concat_df.append(mini_df, ignore_index=True)
-        context.resources.logger.info(mini_df.dtypes)
     concat_df.to_sql(name='pit_big_table_bids_and_asks', con=context.resources.dwh.get_engine(), if_exists='append', index=False)

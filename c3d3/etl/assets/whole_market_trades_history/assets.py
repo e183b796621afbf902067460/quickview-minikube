@@ -4,8 +4,10 @@ import requests
 from dagster import asset
 import pandas as pd
 
-from c3tl.abstract.fabric import c3Abstract
-from c3tl.bridge.configurator import C3BridgeConfigurator
+from c3d3.infrastructure.c3.abstract.factory import C3AbstractFactory
+from c3d3.infrastructure.c3.bridge.bridge import C3Bridge
+from c3d3.infrastructure.c3.factories.cex_screener.factory import CexScreenerFactory
+from c3d3.infrastructure.c3.interfaces.cex_screener.interface import iCexScreenerHandler
 
 
 @asset(
@@ -20,27 +22,21 @@ from c3tl.bridge.configurator import C3BridgeConfigurator
     description='get_overview() for whole_market_trades_history'
 )
 def get_overview(context, configs: dict) -> List[list]:
-    def _formatting(samples: List[dict], cfg: dict) -> pd.DataFrame:
-        for sample in samples: sample.update(
-            {
-                'exchange_name': cfg['exchange_name'],
-                'ticker_name': cfg['ticker_name'],
-            }
-        )
-        context.resources.logger.info(f"Current overview: {samples}")
-        df = pd.DataFrame(samples)
-        df.rename(
+    def _formatting(raw: pd.DataFrame) -> pd.DataFrame:
+
+        raw.rename(
             columns={
-                'exchange_name': 'h_exchange_name',
-                'ticker_name': 'h_ticker_name',
-                'qty': 'pit_qty',
-                'price': 'pit_price',
-                'ts': 'pit_ts',
-                'side': 'pit_side'
+                iCexScreenerHandler._EXCHANGE_COLUMN: 'h_exchange_name',
+                iCexScreenerHandler._TICKER_COLUMN: 'h_ticker_name',
+                iCexScreenerHandler._QTY_COLUMN: 'pit_qty',
+                iCexScreenerHandler._PRICE_COLUMN: 'pit_price',
+                iCexScreenerHandler._TS_COLUMN: 'pit_ts',
+                iCexScreenerHandler._SIDE_COLUMN: 'pit_side',
+                iCexScreenerHandler._TRADE_FEE_COLUMN: 'pit_fee'
             },
             inplace=True
         )
-        return df
+        return raw
 
     now = datetime.datetime.utcnow()
     previous = context.resources.dwh.get_client().query(
@@ -55,25 +51,24 @@ def get_overview(context, configs: dict) -> List[list]:
         ''').result_rows[0][0]
     previous = previous if previous.strftime('%Y') != '1970' or not previous else now - datetime.timedelta(minutes=5)
     if now - previous > datetime.timedelta(hours=1):
-        previous = now - datetime.timedelta(minutes=30)
-    context.resources.logger.info(f"Current previous timestamp: {previous}")
+        now = previous + datetime.timedelta(minutes=10)
+    context.resources.logger.info(f"Current timestamp: from {previous} to {now}")
     while True:
         try:
-            class_ = C3BridgeConfigurator(
-                abstract=c3Abstract,
-                fabric_name='whole_market_trades_history',
-                handler_name=configs['exchange_name']
-            ).produce_handler()
-            handler = class_()
-            overview: List[dict] = handler.get_overview(
-                start=previous,
-                end=now,
-                ticker=configs['ticker_name']
+            route = C3Bridge(
+                abstract_factory=C3AbstractFactory,
+                factory_key=CexScreenerFactory.key,
+                object_key=configs['exchange_name']
+            ).init_object(
+                ticker=configs['ticker_name'],
+                start_time=previous,
+                end_time=now
             )
+            overview = route.do()
         except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError):
             context.resources.w3sleep.sleep()
         else:
             break
-    df = _formatting(samples=overview, cfg=configs)
+    df = _formatting(raw=overview)
     return context.resources.df_serializer.df_to_list(df)
 

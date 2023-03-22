@@ -3,10 +3,11 @@ from typing import List
 from dagster import asset
 import pandas as pd
 
-from raffaelo.providers.http.provider import HTTPProvider
-from d3tl.abstract.fabric import d3Abstract
-from d3tl.bridge.configurator import D3BridgeConfigurator
-from trad3r.root.composite.trader import rootTrad3r
+from c3d3.domain.d3.adhoc.nodes.http.adhoc import HTTPNode
+from c3d3.infrastructure.d3.abstract.factory import D3AbstractFactory
+from c3d3.infrastructure.d3.factories.dex_screener.factory import DexScreenerFactory
+from c3d3.infrastructure.d3.bridge.bridge import D3Bridge
+from c3d3.infrastructure.d3.interfaces.dex_screener.interface import iDexScreenerHandler
 
 
 @asset(
@@ -21,44 +22,36 @@ from trad3r.root.composite.trader import rootTrad3r
     description='get_overview() for bids_and_asks'
 )
 def get_overview(context, configs: dict) -> List[list]:
-    def _formatting(samples: List[dict], cfg: dict) -> pd.DataFrame:
-        for sample in samples: sample.update(
-            {
-                'pool_address': cfg['pool_address'],
-                'network_name': cfg['network_name'],
-                'protocol_name': cfg['protocol_name']
-            }
-        )
-        context.resources.logger.info(f"Current overview: {samples}")
-        df = pd.DataFrame(samples)
-        df.rename(
+    def _formatting(raw: pd.DataFrame) -> pd.DataFrame:
+        raw.rename(
             columns={
-                'pool_address': 'h_pool_address',
-                'network_name': 'h_network_name',
-                'protocol_name': 'h_protocol_name',
-                'symbol': 'pit_symbol',
-                'price': 'pit_price',
-                'sender': 'pit_sender',
-                'recipient': 'pit_recipient',
-                'amount0': 'pit_amount0',
-                'amount1': 'pit_amount1',
-                'decimals0': 'pit_decimals0',
-                'decimals1': 'pit_decimals1',
-                'reserve0': 'pit_reserve0',
-                'reserve1': 'pit_reserve1',
-                'sqrt_p': 'pit_sqrt_p',
-                'liquidity': 'pit_liquidity',
-                'fee': 'pit_fee',
-                'gas_used': 'pit_gas_used',
-                'effective_gas_price': 'pit_effective_gas_price',
-                'gas_symbol': 'pit_gas_symbol',
-                'index_position_in_the_block': 'pit_index_position_in_the_block',
-                'tx_hash': 'pit_tx_hash',
-                'time': 'pit_ts'
+                iDexScreenerHandler._POOL_ADDRESS_COLUMN: 'h_pool_address',
+                iDexScreenerHandler._CHAIN_NAME_COLUMN: 'h_network_name',
+                iDexScreenerHandler._PROTOCOL_NAME_COLUMN: 'h_protocol_name',
+                iDexScreenerHandler._POOL_SYMBOL_COLUMN: 'pit_symbol',
+                iDexScreenerHandler._TRADE_PRICE_COLUMN: 'pit_price',
+                iDexScreenerHandler._SENDER_COLUMN: 'pit_sender',
+                iDexScreenerHandler._RECIPIENT_COLUMN: 'pit_recipient',
+                iDexScreenerHandler._AMOUNT0_COLUMN: 'pit_amount0',
+                iDexScreenerHandler._AMOUNT1_COLUMN: 'pit_amount1',
+                iDexScreenerHandler._DECIMALS0_COLUMN: 'pit_decimals0',
+                iDexScreenerHandler._DECIMALS1_COLUMN: 'pit_decimals1',
+                iDexScreenerHandler._RESERVE0_COLUMN: 'pit_reserve0',
+                iDexScreenerHandler._RESERVE1_COLUMN: 'pit_reserve1',
+                iDexScreenerHandler._SQRT_P_COLUMN: 'pit_sqrt_p',
+                iDexScreenerHandler._LIQUIDITY_COLUMN: 'pit_liquidity',
+                iDexScreenerHandler._TRADE_FEE_COLUMN: 'pit_fee',
+                iDexScreenerHandler._GAS_USED_COLUMN: 'pit_gas_used',
+                iDexScreenerHandler._EFFECTIVE_GAS_PRICE_COLUMN: 'pit_effective_gas_price',
+                iDexScreenerHandler._GAS_SYMBOL_COLUMN: 'pit_gas_symbol',
+                iDexScreenerHandler._GAS_USD_PRICE_COLUMN: 'pit_gas_usd_price',
+                iDexScreenerHandler._INDEX_POSITION_IN_THE_BLOCK_COLUMN: 'pit_index_position_in_the_block',
+                iDexScreenerHandler._TX_HASH_COLUMN: 'pit_tx_hash',
+                iDexScreenerHandler._TS_COLUMN: 'pit_ts'
             },
             inplace=True
         )
-        return df
+        return raw
     now = datetime.datetime.utcnow()
     previous = context.resources.dwh.get_client().query(
         f'''
@@ -73,35 +66,29 @@ def get_overview(context, configs: dict) -> List[list]:
     ''').result_rows[0][0]
     previous = previous if previous.strftime('%Y') != '1970' or not previous else now - datetime.timedelta(minutes=5)
     if now - previous > datetime.timedelta(hours=1):
-        previous = now - datetime.timedelta(minutes=30)
-    context.resources.logger.info(f"Current previous timestamp: {previous}")
+        now = previous + datetime.timedelta(minutes=10)
+    context.resources.logger.info(f"Current timestamp: from {previous} to {now}")
     while True:
         try:
-            provider = HTTPProvider(uri=context.resources.fernet.decrypt(configs['network_rpc_node'].encode()).decode())
-            class_ = D3BridgeConfigurator(
-                abstract=d3Abstract,
-                fabric_name='bids_and_asks',
-                handler_name=configs['protocol_name']
-            ).produce_handler()
-            handler = class_(
-                address=configs['pool_address'],
-                provider=provider,
-                uri=configs['network_uri'],
+            node = HTTPNode(uri=context.resources.fernet.decrypt(configs['network_rpc_node'].encode()).decode())
+            route = D3Bridge(
+                abstract_factory=D3AbstractFactory,
+                factory_key=DexScreenerFactory.key,
+                object_key=configs['protocol_name']
+            ).init_object(
+                start_time=previous,
+                end_time=now,
                 api_key=context.resources.fernet.decrypt(configs['network_api_key'].encode()).decode(),
-                block_limit=configs['network_block_limit'],
-                gas_symbol=configs['native_chain_token'],
                 chain=configs['network_name'],
-                trader=rootTrad3r
+                is_reverse=configs['is_reverse'],
+                address=configs['pool_address'],
+                node=node
             )
-            overview: List[dict] = handler.get_overview(
-                start=previous,
-                end=now,
-                is_reverse=configs['is_reverse']
-            )
+            overview = route.do()
         except ValueError:
             context.resources.w3sleep.sleep()
         else:
             break
-    df = _formatting(samples=overview, cfg=configs)
+    df = _formatting(raw=overview)
     return context.resources.df_serializer.df_to_list(df)
 
