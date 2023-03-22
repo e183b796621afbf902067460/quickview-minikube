@@ -21,15 +21,6 @@ from etl.resources.w3sleep.resource import w3sleep
         'df_serializer': df_serializer,
         'w3sleep': w3sleep
     },
-    config={
-        "execution": {
-            "config": {
-                "multiprocess": {
-                    "max_concurrent": 2,
-                },
-            }
-        }
-    },
     executor_def=celery_executor
 )
 def dag():
