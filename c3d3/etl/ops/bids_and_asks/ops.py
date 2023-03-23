@@ -11,9 +11,6 @@ import pandas as pd
         'd3vault',
         'logger'
     },
-    tags={
-        'dagster-celery/queue': 'dagster',
-    },
     out=DynamicOut(dict)
 )
 def extract_from_d3vault(context) -> List[dict]:

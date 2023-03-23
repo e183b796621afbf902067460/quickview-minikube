@@ -18,10 +18,6 @@ from c3d3.infrastructure.c3.interfaces.cex_screener.interface import iCexScreene
         'fernet',
         'df_serializer',
         'w3sleep'
-    },
-    description='get_overview() for whole_market_trades_history',
-    op_tags={
-        'dagster-celery/queue': 'dagster'
     }
 )
 def get_overview(context, configs: dict) -> List[list]:

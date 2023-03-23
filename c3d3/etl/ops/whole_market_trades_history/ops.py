@@ -11,9 +11,6 @@ import pandas as pd
         'c3vault',
         'logger'
     },
-    tags={
-        'dagster-celery/queue': 'dagster',
-    },
     out=DynamicOut(dict)
 )
 def extract_from_c3vault(context) -> List[dict]:
