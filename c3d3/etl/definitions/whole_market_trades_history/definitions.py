@@ -1,4 +1,5 @@
 from dagster import Definitions, AssetsDefinition
+from dagster_celery import celery_executor
 
 from etl.assets.whole_market_trades_history.assets import get_overview
 from etl.ops.whole_market_trades_history.ops import extract_from_c3vault, load_to_dwh
@@ -27,5 +28,6 @@ whole_market_trades_history = Definitions(
         'df_serializer': df_serializer,
         'w3sleep': w3sleep
     },
-    schedules=[every_5th_minute]
+    schedules=[every_5th_minute],
+    executor=celery_executor
 )

@@ -73,7 +73,7 @@ services:
     ports:
       - '5555:5555'
     environment:
-      CELERY_BROKER_URL: pyamqp://rabbitmq:rabbitmq@rabbitmq:5672/dagster
+      CELERY_BROKER_URL: 'pyamqp://rabbitmq:rabbitmq@0.0.0.0:5672/dagster'
       FLOWER_PORT: 5555
     networks:
       - c3d3
@@ -86,6 +86,8 @@ services:
       dockerfile: Dockerfile
     entrypoint: [ "dagster-celery", "worker", "start", "--loglevel=info", "-A", "dagster_celery.app", "-y", "celery.yaml" ]
     restart: always
+    environment:
+      CELERY_BROKER_URL: 'pyamqp://rabbitmq:rabbitmq@0.0.0.0:5672/dagster'
     ports:
       - '4000:4000'
     env_file:
