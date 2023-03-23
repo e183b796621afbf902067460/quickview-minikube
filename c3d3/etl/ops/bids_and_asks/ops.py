@@ -12,7 +12,7 @@ import pandas as pd
         'logger'
     },
     tags={
-        'fabric': 'bids_and_asks'
+        'dagster-celery/queue': 'dagster',
     },
     out=DynamicOut(dict)
 )

@@ -12,7 +12,7 @@ import pandas as pd
         'logger'
     },
     tags={
-        'fabric': 'whole_market_trades_history'
+        'dagster-celery/queue': 'dagster',
     },
     out=DynamicOut(dict)
 )
