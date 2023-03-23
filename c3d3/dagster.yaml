@@ -34,10 +34,6 @@ schedule_storage:
 run_coordinator:
   module: dagster.core.run_coordinator
   class: QueuedRunCoordinator
-  config:
-    max_concurrent_runs: 2
-    dequeue_use_threads: true
-    dequeue_num_workers: 2
 
 telemetry:
   enabled: false
