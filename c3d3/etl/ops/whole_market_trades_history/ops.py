@@ -52,7 +52,7 @@ def extract_from_c3vault(context) -> List[dict]:
         'df_serializer'
     },
     tags={
-        'fabric': 'whole_market_trades_history'
+        'dagster-celery/queue': 'dagster',
     }
 )
 def load_to_dwh(context, df: List[list]) -> None:

@@ -19,7 +19,10 @@ from c3d3.infrastructure.d3.interfaces.dex_screener.interface import iDexScreene
         'df_serializer',
         'w3sleep'
     },
-    description='get_overview() for bids_and_asks'
+    description='get_overview() for bids_and_asks',
+    op_tags={
+        'dagster-celery/queue': 'dagster'
+    }
 )
 def get_overview(context, configs: dict) -> List[list]:
     def _formatting(raw: pd.DataFrame) -> pd.DataFrame:

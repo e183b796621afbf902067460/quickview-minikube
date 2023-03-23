@@ -78,7 +78,7 @@ def extract_from_d3vault(context) -> List[dict]:
         'df_serializer'
     },
     tags={
-        'fabric': 'bids_and_asks'
+        'dagster-celery/queue': 'dagster',
     }
 )
 def load_to_dwh(context, df: List[list]) -> None:
