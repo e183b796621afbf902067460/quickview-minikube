@@ -1,6 +1,6 @@
 from dagster import job
-from dagster_celery import celery_executor
 
+from etl.executors.celery.executor import celery_executor
 from etl.assets.bids_and_asks.assets import get_overview
 from etl.ops.bids_and_asks.ops import extract_from_d3vault, load_to_dwh
 from etl.resources.d3vault.resource import d3vault

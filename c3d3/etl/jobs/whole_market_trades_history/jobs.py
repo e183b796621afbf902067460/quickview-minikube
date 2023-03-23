@@ -1,6 +1,6 @@
 from dagster import job
-from dagster_celery import celery_executor
 
+from etl.executors.celery.executor import celery_executor
 from etl.assets.whole_market_trades_history.assets import get_overview
 from etl.ops.whole_market_trades_history.ops import extract_from_c3vault, load_to_dwh
 from etl.resources.c3vault.resource import c3vault

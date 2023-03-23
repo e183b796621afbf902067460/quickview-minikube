@@ -23,6 +23,8 @@ services:
       dockerfile: Dockerfile
     env_file:
       - c3d3/.env
+    environment:
+      CELERY_BROKER_URL: 'pyamqp://rabbitmq:rabbitmq@0.0.0.0:5672/dagster'
     command: "dagster-daemon run -w workspace.yaml"
     depends_on:
       - postgres
