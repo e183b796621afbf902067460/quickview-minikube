@@ -41,8 +41,8 @@ compute_logs:
   module: dagster_aws.s3.compute_log_manager
   class: S3ComputeLogManager
   config:
-    endpoint_url:
-    bucket: 'dagster-compute-logs'
+    bucket:
+    endpoint_url: 'http://minio:9000'
     use_ssl: false
 
 storage:
