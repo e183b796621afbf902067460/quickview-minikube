@@ -1,4 +1,6 @@
 from dagster import Definitions, AssetsDefinition
+from dagster_aws.s3.io_manager import s3_pickle_io_manager
+from dagster_aws.s3.resources import s3_resource
 
 from etl.executors.celery.executor import celery_executor
 from etl.assets.bids_and_asks.assets import get_overview
@@ -26,7 +28,9 @@ bids_and_asks = Definitions(
         'logger': logger,
         'fernet': fernet,
         'df_serializer': df_serializer,
-        'w3sleep': w3sleep
+        'w3sleep': w3sleep,
+        "io_manager": s3_pickle_io_manager,
+        "s3": s3_resource
     },
     schedules=[every_5th_minute],
     executor=celery_executor

@@ -5,9 +5,9 @@ run_storage:
     postgres_db:
       username: postgres
       password: postgres
-      hostname: postgres
+      hostname:
       db_name: postgres
-      port: 5432
+      port:
 
 event_log_storage:
   module: dagster_postgres.event_log
@@ -16,9 +16,9 @@ event_log_storage:
     postgres_db:
       username: postgres
       password: postgres
-      hostname: postgres
+      hostname:
       db_name: postgres
-      port: 5432
+      port:
 
 schedule_storage:
   module: dagster_postgres.schedule_storage
@@ -27,15 +27,32 @@ schedule_storage:
     postgres_db:
       username: postgres
       password: postgres
-      hostname: postgres
+      hostname:
       db_name: postgres
-      port: 5432
+      port:
 
 run_coordinator:
   module: dagster.core.run_coordinator
   class: QueuedRunCoordinator
   config:
     max_concurrent_runs: -1
+
+compute_logs:
+  module: dagster_aws.s3.compute_log_manager
+  class: S3ComputeLogManager
+  config:
+    endpoint_url:
+    bucket: 'dagster-compute-logs'
+    use_ssl: false
+
+storage:
+  postgres:
+    postgres_db:
+      username: postgres
+      password: postgres
+      hostname:
+      db_name: postgres
+      port:
 
 telemetry:
   enabled: false
