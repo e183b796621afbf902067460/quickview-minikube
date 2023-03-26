@@ -42,7 +42,7 @@ compute_logs:
   class: S3ComputeLogManager
   config:
     bucket:
-    endpoint_url: 'http://minio:9000'
+    endpoint_url: 'http://0.0.0.0:9000'
     use_ssl: false
 
 storage:
