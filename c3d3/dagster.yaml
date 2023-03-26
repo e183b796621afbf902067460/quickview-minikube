@@ -45,15 +45,6 @@ compute_logs:
     endpoint_url: 'http://0.0.0.0:9000'
     use_ssl: false
 
-storage:
-  postgres:
-    postgres_db:
-      username: postgres
-      password: postgres
-      hostname:
-      db_name: postgres
-      port:
-
 telemetry:
   enabled: false
 
