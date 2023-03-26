@@ -10,7 +10,9 @@ services:
       - '3000:3000'
     environment:
       AWS_ACCESS_KEY_ID: 
-      AWS_SECRET_ACCESS_KEY: 
+      AWS_SECRET_ACCESS_KEY:
+      S3_BUCKET:
+      S3_BACKEND_URL:
     env_file:
       - c3d3/.env
     command: "dagit -w workspace.yaml -h 0.0.0.0 -p 3000"
@@ -29,7 +31,9 @@ services:
     environment:
       CELERY_BROKER_URL: 'pyamqp://rabbitmq:rabbitmq@0.0.0.0:5672/dagster'
       AWS_ACCESS_KEY_ID: 
-      AWS_SECRET_ACCESS_KEY: 
+      AWS_SECRET_ACCESS_KEY:
+      S3_BUCKET:
+      S3_BACKEND_URL:
     command: "dagster-daemon run -w workspace.yaml"
     depends_on:
       - postgres
@@ -113,6 +117,8 @@ services:
       CELERY_BROKER_URL: 'pyamqp://rabbitmq:rabbitmq@0.0.0.0:5672/dagster'
       AWS_ACCESS_KEY_ID: 
       AWS_SECRET_ACCESS_KEY:
+      S3_BUCKET:
+      S3_BACKEND_URL:
     ports:
       - '4000:4000'
     env_file:

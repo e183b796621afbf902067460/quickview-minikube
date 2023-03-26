@@ -1,6 +1,7 @@
 from dagster import job
 from dagster_aws.s3.io_manager import s3_pickle_io_manager
 from dagster_aws.s3.resources import s3_resource
+import os
 
 from etl.executors.celery.executor import celery_executor
 from etl.assets.bids_and_asks.assets import get_overview
@@ -30,8 +31,12 @@ from etl.resources.w3sleep.resource import w3sleep
         'resources': {
             'io_manager': {
                 'config': {
-                    's3_bucket': 'dagster-compute-logs',
-                    's3_prefix': 'dagster-compute-logs'
+                    's3_bucket': os.getenv('S3_BUCKET', None)
+                }
+            },
+            's3': {
+                'config': {
+                    'endpoint_url': os.getenv('S3_BACKEND_URL', None)
                 }
             }
         }
