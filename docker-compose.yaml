@@ -9,7 +9,7 @@ services:
     ports:
       - '3000:3000'
     environment:
-      AWS_ACCESS_KEY_ID: minio
+      AWS_ACCESS_KEY_ID: minio-minio
       AWS_SECRET_ACCESS_KEY: minio-minio
     env_file:
       - c3d3/.env
@@ -28,7 +28,7 @@ services:
       - c3d3/.env
     environment:
       CELERY_BROKER_URL: 'pyamqp://rabbitmq:rabbitmq@0.0.0.0:5672/dagster'
-      AWS_ACCESS_KEY_ID: minio
+      AWS_ACCESS_KEY_ID: minio-minio
       AWS_SECRET_ACCESS_KEY: minio-minio
     command: "dagster-daemon run -w workspace.yaml"
     depends_on:
@@ -88,17 +88,15 @@ services:
       - rabbitmq
 
   minio:
-    image: minio/minio:RELEASE.2022-11-11T03-44-20Z
+    image: minio/minio:latest
     ports:
       - '9000:9000'
       - '9090:9090'
     volumes:
       - ./minio:/data
     environment:
-      MINIO_ROOT_USER: minio
-      MINIO_ROOT_PASSWORD: minio
-      AWS_ACCESS_KEY_ID: minio
-      AWS_SECRET_ACCESS_KEY: minio-minio
+      MINIO_ROOT_USER: minio-minio
+      MINIO_ROOT_PASSWORD: minio-minio
     env_file:
       - c3d3/.env
     command: 'server /data --console-address ":9090"'
@@ -113,7 +111,7 @@ services:
     restart: always
     environment:
       CELERY_BROKER_URL: 'pyamqp://rabbitmq:rabbitmq@0.0.0.0:5672/dagster'
-      AWS_ACCESS_KEY_ID: minio
+      AWS_ACCESS_KEY_ID: minio-minio
       AWS_SECRET_ACCESS_KEY: minio-minio
     ports:
       - '4000:4000'
