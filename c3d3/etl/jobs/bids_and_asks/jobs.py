@@ -30,8 +30,8 @@ from etl.resources.w3sleep.resource import w3sleep
         'resources': {
             'io_manager': {
                 'config': {
-                    's3_bucket': ...,
-                    's3_prefix': ...
+                    's3_bucket': 'dagster-compute-logs',
+                    's3_prefix': 'dagster-compute-logs'
                 }
             }
         }
