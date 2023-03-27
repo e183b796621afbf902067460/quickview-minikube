@@ -61,7 +61,7 @@ def get_overview(context, configs: dict) -> List[list]:
         WHERE 
             h_pool_address = '{configs['pool_address']}' AND
             h_protocol_name = '{configs['protocol_name']}' AND
-            h_network_name = '{configs['network_name']}'
+            countSubstrings('{configs['network_name']}', h_network_name) = 1
     ''').result_rows[0][0]
     previous = previous if previous.strftime('%Y') != '1970' or not previous else now - datetime.timedelta(minutes=5)
     if now - previous > datetime.timedelta(hours=1):
