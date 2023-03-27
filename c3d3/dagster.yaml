@@ -35,7 +35,8 @@ run_coordinator:
   module: dagster.core.run_coordinator
   class: QueuedRunCoordinator
   config:
-    max_concurrent_runs: -1
+    max_concurrent_runs:
+    dequeue_use_threads: true
 
 compute_logs:
   module: dagster_aws.s3.compute_log_manager
