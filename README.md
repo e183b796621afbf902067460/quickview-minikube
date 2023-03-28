@@ -1,9 +1,9 @@
-# C3D3 Dagster Research
-Depends on: [raffaelo](https://github.com/e183b796621afbf902067460/raffaelo) and [medici](https://github.com/e183b796621afbf902067460/medici), [d3f1nance](https://github.com/e183b796621afbf902067460/d3f1nance) and [c3f1nance](https://github.com/e183b796621afbf902067460/c3f1nance), [d3tl](https://github.com/e183b796621afbf902067460/d3tl) and [c3tl](https://github.com/e183b796621afbf902067460/c3tl).
+# C3D3 Dagster
+Depends on: [c3d3-research-framework](https://github.com/e183b796621afbf902067460/c3d3-research-framework).
 
 ---
 
-Dagster is used for C3D3 Research ETL orchestration.
+Dagster is used for C3D3 ETL orchestration.
 
 # Configuration
 
