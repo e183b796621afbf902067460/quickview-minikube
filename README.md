@@ -40,7 +40,7 @@ docker-compose up -d --build --force-recreate dagit daemon postgres rabbitmq flo
 docker-compose up -d --build --force-recreate worker
 ```
 
-After setup every worker can be seen in the Flower's UI.
+After setup each worker can be seen in the Flower's UI.
 
 # Exit
 - To stop all running containers:
