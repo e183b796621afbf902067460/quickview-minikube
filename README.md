@@ -34,7 +34,7 @@ docker-compose up -d --build --force-recreate dagit daemon postgres rabbitmq flo
 # Worker
 
 - Set Access and Secret Keys in [docker-compose](https://github.com/e183b796621afbf902067460/c3d3-dagster-research/blob/master/docker-compose.yaml) and Bucket name in [dagster](https://github.com/e183b796621afbf902067460/c3d3-dagster-research/blob/master/c3d3/dagster.yaml), also configure hosts and ports.
-- Configure [celery](https://github.com/e183b796621afbf902067460/c3d3-dagster-research/blob/master/c3d3/celery.yaml) hosts and posrts.
+- Configure [celery](https://github.com/e183b796621afbf902067460/c3d3-dagster-research/blob/master/c3d3/celery.yaml) hosts and ports.
 - Run docker-compose (`sudo`):
 ```
 docker-compose up -d --build --force-recreate worker
