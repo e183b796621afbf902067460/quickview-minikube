@@ -15,8 +15,8 @@ jobs:
         with:
           host: 13.231.118.166
           username: ubuntu
-          key: ${{ secrets.UBUNTU }}
+          key: ${{ secrets.DEVOPS_KEY }}
           command_timeout: 30m
           script: |
             cd /home/ubuntu/devops/
-            sudo ansible-playbook update_framework.yml
+            sudo ansible-playbook udpate_dagster.yml
