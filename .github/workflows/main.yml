@@ -1,0 +1,22 @@
+name: Update dagster-reserach
+
+on:
+ push:
+    branches:
+      - 'master'
+
+
+jobs:
+  test_dependency:
+    runs-on: ubuntu-latest
+    steps:
+      - name: server
+        uses: appleboy/ssh-action@master
+        with:
+          host: 13.231.118.166
+          username: ubuntu
+          key: ${{ secrets.UBUNTU }}
+          command_timeout: 30m
+          script: |
+            cd /home/ubuntu/devops/
+            sudo ansible-playbook update_framework.yml
