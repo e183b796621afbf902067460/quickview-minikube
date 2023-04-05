@@ -7,7 +7,7 @@ on:
 
 
 jobs:
-  test_dependency:
+  update_framework:
     runs-on: ubuntu-latest
     steps:
       - name: server
