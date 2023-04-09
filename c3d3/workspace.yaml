@@ -1,7 +1,7 @@
 load_from:
   - python_file:
-      relative_path: etl/definitions/bids_and_asks/definitions.py
-      attribute: bids_and_asks
+      relative_path: etl/definitions/dex_screener/definitions.py
+      attribute: dex_screener
   - python_file:
-      relative_path: etl/definitions/whole_market_trades_history/definitions.py
-      attribute: whole_market_trades_history
+      relative_path: etl/definitions/cex_screener/definitions.py
+      attribute: cex_screener

@@ -1,13 +1,15 @@
 from typing import List
 import datetime
+from dagster import asset, RetryRequested
 import requests
-from dagster import asset
 import pandas as pd
 
 from c3d3.infrastructure.c3.abstract.factory import C3AbstractFactory
 from c3d3.infrastructure.c3.bridge.bridge import C3Bridge
 from c3d3.infrastructure.c3.factories.cex_screener.factory import CexScreenerFactory
 from c3d3.infrastructure.c3.interfaces.cex_screener.interface import iCexScreenerHandler
+
+from etl.resources.w3sleepy.resource import W3Sleepy, MAX_RETRIES
 
 
 @asset(
@@ -16,9 +18,9 @@ from c3d3.infrastructure.c3.interfaces.cex_screener.interface import iCexScreene
         'dwh',
         'logger',
         'fernet',
-        'df_serializer',
-        'w3sleep'
-    }
+        'df_serializer'
+    },
+    retry_policy=W3Sleepy
 )
 def get_overview(context, configs: dict) -> List[list]:
     def _formatting(raw: pd.DataFrame) -> pd.DataFrame:
@@ -51,23 +53,22 @@ def get_overview(context, configs: dict) -> List[list]:
     previous = previous if previous.strftime('%Y') != '1970' or not previous else now - datetime.timedelta(minutes=5)
     if now - previous > datetime.timedelta(hours=1):
         now = previous + datetime.timedelta(minutes=10)
+
     context.resources.logger.info(f"Current timestamp: from {previous} to {now}")
-    while True:
-        try:
-            route = C3Bridge(
-                abstract_factory=C3AbstractFactory,
-                factory_key=CexScreenerFactory.key,
-                object_key=configs['exchange_name']
-            ).init_object(
-                ticker=configs['ticker_name'],
-                start_time=previous,
-                end_time=now
-            )
-            overview = route.do()
-        except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError):
-            context.resources.w3sleep.sleep()
-        else:
-            break
+
+    route = C3Bridge(
+        abstract_factory=C3AbstractFactory,
+        factory_key=CexScreenerFactory.key,
+        object_key=configs['exchange_name']
+    ).init_object(
+        ticker=configs['ticker_name'],
+        start_time=previous,
+        end_time=now
+    )
+    try:
+        overview = route.do()
+    except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as exc:
+        raise RetryRequested(max_retries=MAX_RETRIES, seconds_to_wait=.5) from exc
     df = _formatting(raw=overview)
     return context.resources.df_serializer.df_to_list(df)
 

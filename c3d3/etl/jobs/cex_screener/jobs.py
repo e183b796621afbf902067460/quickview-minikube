@@ -4,25 +4,23 @@ from dagster_aws.s3.resources import s3_resource
 import os
 
 from etl.executors.celery.executor import celery_executor
-from etl.assets.bids_and_asks.assets import get_overview
-from etl.ops.bids_and_asks.ops import extract_from_d3vault, load_to_dwh
-from etl.resources.d3vault.resource import d3vault
+from etl.assets.cex_screener.assets import get_overview
+from etl.ops.cex_screener.ops import extract_from_c3vault, load_to_dwh
+from etl.resources.c3vault.resource import c3vault
 from etl.resources.logger.resource import logger
 from etl.resources.dwh.resource import dwh
 from etl.resources.fernet.resource import fernet
 from etl.resources.serializers.resource import df_serializer
-from etl.resources.w3sleep.resource import w3sleep
 
 
 @job(
-    name='bids_and_asks',
+    name='cex_screener',
     resource_defs={
-        'd3vault': d3vault,
+        'c3vault': c3vault,
         'dwh': dwh,
         'logger': logger,
         'fernet': fernet,
         'df_serializer': df_serializer,
-        'w3sleep': w3sleep,
         "io_manager": s3_pickle_io_manager,
         "s3": s3_resource
     },
@@ -43,8 +41,6 @@ from etl.resources.w3sleep.resource import w3sleep
     }
 )
 def dag():
-    configs = extract_from_d3vault()
+    configs = extract_from_c3vault()
     overviews = configs.map(get_overview)
     load_to_dwh(overviews.collect())
-
-

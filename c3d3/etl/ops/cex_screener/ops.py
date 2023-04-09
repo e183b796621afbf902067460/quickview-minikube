@@ -1,5 +1,4 @@
 from typing import List
-from datetime import datetime
 
 from dagster import op, DynamicOut, DynamicOutput
 import pandas as pd
@@ -27,6 +26,7 @@ def extract_from_c3vault(context) -> List[dict]:
         ORDER BY
             h_exchanges.h_exchange_name
     '''
+
     context.resources.logger.info(f"{query}")
 
     samples = context.resources.c3vault.read(query=query)

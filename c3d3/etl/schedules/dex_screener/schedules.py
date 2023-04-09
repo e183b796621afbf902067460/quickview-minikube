@@ -1,10 +1,10 @@
 from dagster import ScheduleDefinition
 
-from etl.jobs.whole_market_trades_history.jobs import dag
+from etl.jobs.dex_screener.jobs import dag
 
 
 every_5th_minute = ScheduleDefinition(
-    name='whole_market_trades_history',
+    name='dex_screener',
     job=dag,
     cron_schedule="*/5 * * * *"
 )

@@ -1,6 +1,6 @@
 import datetime
 from typing import List
-from dagster import asset
+from dagster import asset, RetryRequested
 import pandas as pd
 
 from c3d3.domain.d3.adhoc.nodes.http.adhoc import HTTPNode
@@ -9,6 +9,8 @@ from c3d3.infrastructure.d3.factories.dex_screener.factory import DexScreenerFac
 from c3d3.infrastructure.d3.bridge.bridge import D3Bridge
 from c3d3.infrastructure.d3.interfaces.dex_screener.interface import iDexScreenerHandler
 
+from etl.resources.w3sleepy.resource import W3Sleepy, MAX_RETRIES
+
 
 @asset(
     name='df',
@@ -16,9 +18,9 @@ from c3d3.infrastructure.d3.interfaces.dex_screener.interface import iDexScreene
         'dwh',
         'logger',
         'fernet',
-        'df_serializer',
-        'w3sleep'
-    }
+        'df_serializer'
+    },
+    retry_policy=W3Sleepy
 )
 def get_overview(context, configs: dict) -> List[list]:
     def _formatting(raw: pd.DataFrame) -> pd.DataFrame:
@@ -66,28 +68,27 @@ def get_overview(context, configs: dict) -> List[list]:
     previous = previous if previous.strftime('%Y') != '1970' or not previous else now - datetime.timedelta(minutes=5)
     if now - previous > datetime.timedelta(hours=1):
         now = previous + datetime.timedelta(minutes=10)
+
     context.resources.logger.info(f"Current timestamp: from {previous} to {now}")
-    while True:
-        try:
-            node = HTTPNode(uri=context.resources.fernet.decrypt(configs['network_rpc_node'].encode()).decode())
-            route = D3Bridge(
-                abstract_factory=D3AbstractFactory,
-                factory_key=DexScreenerFactory.key,
-                object_key=configs['protocol_name']
-            ).init_object(
-                start_time=previous,
-                end_time=now,
-                api_key=context.resources.fernet.decrypt(configs['network_api_key'].encode()).decode(),
-                chain=configs['network_name'],
-                is_reverse=configs['is_reverse'],
-                address=configs['pool_address'],
-                node=node
-            )
-            overview = route.do()
-        except ValueError:
-            context.resources.w3sleep.sleep()
-        else:
-            break
+
+    node = HTTPNode(uri=context.resources.fernet.decrypt(configs['network_rpc_node'].encode()).decode())
+    route = D3Bridge(
+        abstract_factory=D3AbstractFactory,
+        factory_key=DexScreenerFactory.key,
+        object_key=configs['protocol_name']
+    ).init_object(
+        start_time=previous,
+        end_time=now,
+        api_key=context.resources.fernet.decrypt(configs['network_api_key'].encode()).decode(),
+        chain=configs['network_name'],
+        is_reverse=configs['is_reverse'],
+        address=configs['pool_address'],
+        node=node
+    )
+    try:
+        overview = route.do()
+    except ValueError as exc:
+        raise RetryRequested(max_retries=MAX_RETRIES, seconds_to_wait=.5) from exc
     df = _formatting(raw=overview)
     return context.resources.df_serializer.df_to_list(df)
 
