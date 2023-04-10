@@ -7,11 +7,11 @@ import os
 from urllib.parse import quote_plus
 
 
-class D3DataVault:
-    DB_ADDRESS = os.getenv('D3VAULT_HOST', '')
-    DB_USER = os.getenv('D3VAULT_USER', '')
-    DB_PASSWORD = quote_plus(os.getenv('D3VAULT_PASSWORD', ''))
-    DB_NAME = os.getenv('D3VAULT_DB', '')
+class C3ExposureDataVault:
+    DB_ADDRESS = os.getenv('C3VAULT_EXPOSURE_HOST', '')
+    DB_USER = os.getenv('C3VAULT_EXPOSURE_USER', '')
+    DB_PASSWORD = quote_plus(os.getenv('C3VAULT_EXPOSURE_PASSWORD', ''))
+    DB_NAME = os.getenv('C3VAULT_EXPOSURE_DB', '')
 
     DB_URL = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_ADDRESS}/{DB_NAME}'
 
@@ -36,5 +36,5 @@ class D3DataVault:
 
 
 @resource
-def d3vault(init_context) -> D3DataVault:
-    return D3DataVault()
+def c3vault_exposure(init_context) -> C3ExposureDataVault:
+    return C3ExposureDataVault()

@@ -5,3 +5,6 @@ load_from:
   - python_file:
       relative_path: etl/definitions/cex_screener/definitions.py
       attribute: cex_screener
+  - python_file:
+      relative_path: etl/definitions/dex_borrow_screener/definitions.py
+      attribute: dex_borrow_screener

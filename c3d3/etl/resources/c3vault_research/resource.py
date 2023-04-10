@@ -7,11 +7,11 @@ import os
 from urllib.parse import quote_plus
 
 
-class C3DataVault:
-    DB_ADDRESS = os.getenv('C3VAULT_HOST', '')
-    DB_USER = os.getenv('C3VAULT_USER', '')
-    DB_PASSWORD = quote_plus(os.getenv('C3VAULT_PASSWORD', ''))
-    DB_NAME = os.getenv('C3VAULT_DB', '')
+class C3ResearchDataVault:
+    DB_ADDRESS = os.getenv('C3VAULT_RESEARCH_HOST', '')
+    DB_USER = os.getenv('C3VAULT_RESEARCH_USER', '')
+    DB_PASSWORD = quote_plus(os.getenv('C3VAULT_RESEARCH_PASSWORD', ''))
+    DB_NAME = os.getenv('C3VAULT_RESEARCH_DB', '')
 
     DB_URL = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_ADDRESS}/{DB_NAME}'
 
@@ -36,5 +36,5 @@ class C3DataVault:
 
 
 @resource
-def c3vault(init_context) -> C3DataVault:
-    return C3DataVault()
+def c3vault_research(init_context) -> C3ResearchDataVault:
+    return C3ResearchDataVault()

@@ -4,9 +4,9 @@ from dagster_aws.s3.resources import s3_resource
 import os
 
 from etl.executors.celery.executor import celery_executor
-from etl.assets.cex_screener.assets import get_overview
-from etl.ops.cex_screener.ops import extract_from_c3vault, load_to_dwh
-from etl.resources.c3vault_research.resource import c3vault_research
+from etl.assets.dex_borrow_screener.assets import get_overview
+from etl.ops.dex_borrow_screener.ops import extract_from_d3vault, load_to_dwh
+from etl.resources.d3vault_exposure.resource import d3vault_exposure
 from etl.resources.logger.resource import logger
 from etl.resources.dwh.resource import dwh
 from etl.resources.fernet.resource import fernet
@@ -14,9 +14,9 @@ from etl.resources.serializers.resource import df_serializer
 
 
 @job(
-    name='cex_screener',
+    name='dex_screener',
     resource_defs={
-        'c3vault_research': c3vault_research,
+        'd3vault_exposure': d3vault_exposure,
         'dwh': dwh,
         'logger': logger,
         'fernet': fernet,
@@ -41,6 +41,8 @@ from etl.resources.serializers.resource import df_serializer
     }
 )
 def dag():
-    configs = extract_from_c3vault()
+    configs = extract_from_d3vault()
     overviews = configs.map(get_overview)
     load_to_dwh(overviews.collect())
+
+

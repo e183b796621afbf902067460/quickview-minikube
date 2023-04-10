@@ -6,7 +6,7 @@ import os
 from etl.executors.celery.executor import celery_executor
 from etl.assets.dex_screener.assets import get_overview
 from etl.ops.dex_screener.ops import extract_from_d3vault, load_to_dwh
-from etl.resources.d3vault.resource import d3vault
+from etl.resources.d3vault_research.resource import d3vault_research
 from etl.resources.logger.resource import logger
 from etl.resources.dwh.resource import dwh
 from etl.resources.fernet.resource import fernet
@@ -16,7 +16,7 @@ from etl.resources.serializers.resource import df_serializer
 @job(
     name='dex_screener',
     resource_defs={
-        'd3vault': d3vault,
+        'd3vault_research': d3vault_research,
         'dwh': dwh,
         'logger': logger,
         'fernet': fernet,

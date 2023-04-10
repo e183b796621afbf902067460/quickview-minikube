@@ -7,7 +7,7 @@ import pandas as pd
 @op(
     name='configs',
     required_resource_keys={
-        'c3vault',
+        'c3vault_research',
         'logger'
     },
     out=DynamicOut(dict)
@@ -29,7 +29,7 @@ def extract_from_c3vault(context) -> List[dict]:
 
     context.resources.logger.info(f"{query}")
 
-    samples = context.resources.c3vault.read(query=query)
+    samples = context.resources.c3vault_research.read(query=query)
     for sample in samples:
         ticker_name, exchange_name = sample[0], sample[1]
         yield DynamicOutput(

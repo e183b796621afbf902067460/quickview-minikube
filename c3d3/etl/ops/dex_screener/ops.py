@@ -7,7 +7,7 @@ import pandas as pd
 @op(
     name='configs',
     required_resource_keys={
-        'd3vault',
+        'd3vault_research',
         'logger'
     },
     out=DynamicOut(dict)
@@ -48,7 +48,7 @@ def extract_from_d3vault(context) -> List[dict]:
 
     context.resources.logger.info(f"{query}")
 
-    samples = context.resources.d3vault.read(query=query)
+    samples = context.resources.d3vault_research.read(query=query)
     for sample in samples:
         pool_address = sample[0]
         network_name, native_chain_token, network_rpc_node = sample[1], sample[2], sample[3]
