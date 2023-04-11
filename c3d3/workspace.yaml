@@ -8,3 +8,6 @@ load_from:
   - python_file:
       relative_path: etl/definitions/dex_borrow_screener/definitions.py
       attribute: dex_borrow_screener
+  - python_file:
+      relative_path: etl/definitions/dex_supply_screener/definitions.py
+      attribute: dex_supply_screener
