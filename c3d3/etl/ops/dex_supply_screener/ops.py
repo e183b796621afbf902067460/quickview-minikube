@@ -54,7 +54,7 @@ def extract_from_d3vault(context) -> List[dict]:
 
     context.resources.logger.info(f"{query}")
 
-    samples = context.resources.d3vault.read(query=query)
+    samples = context.resources.d3vault_exposure.read(query=query)
     for sample in samples:
         token_address = sample[0]
         wallet_address, label_name = sample[1], sample[2]

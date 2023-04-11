@@ -14,3 +14,6 @@ load_from:
   - python_file:
       relative_path: etl/definitions/dex_erc_screener/definitions.py
       attribute: dex_erc_screener
+  - python_file:
+      relative_path: etl/definitions/dex_gwei_screener/definitions.py
+      attribute: dex_gwei_screener
