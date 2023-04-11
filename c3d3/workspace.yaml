@@ -11,3 +11,6 @@ load_from:
   - python_file:
       relative_path: etl/definitions/dex_supply_screener/definitions.py
       attribute: dex_supply_screener
+  - python_file:
+      relative_path: etl/definitions/dex_erc_screener/definitions.py
+      attribute: dex_erc_screener

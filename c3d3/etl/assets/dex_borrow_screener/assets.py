@@ -31,7 +31,8 @@ def get_overview(context, configs: dict) -> List[list]:
                 iDexBorrowScreenerHandler._SYMBOL_COLUMN: 'pit_symbol',
                 iDexBorrowScreenerHandler._CURRENT_PRICE_COLUMN: 'pit_price',
                 iDexBorrowScreenerHandler._QTY_COLUMN: 'pit_qty',
-                iDexBorrowScreenerHandler._HEALTH_FACTOR_COLUMN: 'pit_health_factor'
+                iDexBorrowScreenerHandler._HEALTH_FACTOR_COLUMN: 'pit_health_factor',
+                iDexBorrowScreenerHandler._TS_COLUMN: 'pit_ts'
             },
             inplace=True
         )

@@ -30,7 +30,8 @@ def get_overview(context, configs: dict) -> List[list]:
                 iDexSupplyScreenerHandler._CHAIN_NAME_COLUMN: 'h_network_name',
                 iDexSupplyScreenerHandler._SYMBOL_COLUMN: 'pit_symbol',
                 iDexSupplyScreenerHandler._CURRENT_PRICE_COLUMN: 'pit_price',
-                iDexSupplyScreenerHandler._QTY_COLUMN: 'pit_qty'
+                iDexSupplyScreenerHandler._QTY_COLUMN: 'pit_qty',
+                iDexSupplyScreenerHandler._TS_COLUMN: 'pit_ts'
             },
             inplace=True
         )
