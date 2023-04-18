@@ -17,3 +17,6 @@ load_from:
   - python_file:
       relative_path: etl/definitions/dex_gwei_screener/definitions.py
       attribute: dex_gwei_screener
+  - python_file:
+      relative_path: etl/definitions/cex_balance_screener/definitions.py
+      attribute: cex_balance_screener
