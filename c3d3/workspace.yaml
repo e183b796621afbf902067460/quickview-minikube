@@ -20,3 +20,6 @@ load_from:
   - python_file:
       relative_path: etl/definitions/cex_balance_screener/definitions.py
       attribute: cex_balance_screener
+  - python_file:
+      relative_path: etl/definitions/cex_open_order_screener/definitions.py
+      attribute: cex_open_order_screener

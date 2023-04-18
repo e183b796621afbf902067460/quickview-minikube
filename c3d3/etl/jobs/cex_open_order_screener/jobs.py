@@ -4,8 +4,8 @@ from dagster_aws.s3.resources import s3_resource
 import os
 
 from etl.executors.celery.executor import celery_executor
-from etl.assets.cex_balance_screener.assets import get_overview
-from etl.ops.cex_balance_screener.ops import extract_from_c3vault, load_to_dwh
+from etl.assets.cex_open_order_screener.assets import get_overview
+from etl.ops.cex_open_order_screener.ops import extract_from_c3vault, load_to_dwh
 from etl.resources.c3vault_exposure.resource import c3vault_exposure
 from etl.resources.logger.resource import logger
 from etl.resources.dwh.resource import dwh
@@ -14,7 +14,7 @@ from etl.resources.serializers.resource import df_serializer
 
 
 @job(
-    name='cex_balance_screener',
+    name='cex_open_order_screener',
     resource_defs={
         'c3vault_exposure': c3vault_exposure,
         'dwh': dwh,
