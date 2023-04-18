@@ -54,5 +54,6 @@ def get_overview(context, configs: dict) -> List[list]:
         overview = handler.do()
     except ValueError as exc:
         raise RetryRequested(max_retries=MAX_RETRIES, seconds_to_wait=.5) from exc
+
     df = _formatting(raw=overview)
     return context.resources.df_serializer.df_to_list(df)

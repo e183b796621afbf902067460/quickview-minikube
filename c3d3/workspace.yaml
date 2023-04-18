@@ -23,3 +23,6 @@ load_from:
   - python_file:
       relative_path: etl/definitions/cex_open_order_screener/definitions.py
       attribute: cex_open_order_screener
+  - python_file:
+      relative_path: etl/definitions/cex_liquidation_screener/definitions.py
+      attribute: cex_liquidation_screener

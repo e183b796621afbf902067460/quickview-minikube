@@ -51,6 +51,7 @@ def get_overview(context, configs: dict) -> List[list]:
         overview = route.do()
     except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as exc:
         raise RetryRequested(max_retries=MAX_RETRIES, seconds_to_wait=.5) from exc
+
     df = _formatting(raw=overview)
     return context.resources.df_serializer.df_to_list(df)
 
