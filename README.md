@@ -14,7 +14,7 @@ git clone https://github.com/e183b796621afbf902067460/c3d3-dagster.git
 
 - Get into the project folder:
 ```
-cd c3d3-dagster-research/
+cd c3d3-dagster/
 ```
 
 - Set environment variables in [.env](https://github.com/e183b796621afbf902067460/c3d3-dagster/blob/master/c3d3/.env).
