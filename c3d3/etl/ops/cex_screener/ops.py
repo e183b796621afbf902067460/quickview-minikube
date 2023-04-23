@@ -23,6 +23,8 @@ def extract_from_c3vault(context) -> List[dict]:
             h_tickers USING(h_ticker_id)
         LEFT JOIN
             h_exchanges USING(h_exchange_id)
+        WHERE
+            h_exchanges.h_exchange_name LIKE '%cex_screener%'
         ORDER BY
             h_exchanges.h_exchange_name
     '''
@@ -54,7 +56,4 @@ def load_to_dwh(context, df: List[list]) -> None:
     for mini_df in df:
         mini_df = context.resources.df_serializer.df_from_list(mini_df)
         concat_df = concat_df.append(mini_df, ignore_index=True)
-    context.resources.dwh.get_client().insert_df(
-        table='pit_big_table_whole_market_trades_history',
-        df=concat_df
-    )
+    concat_df.to_sql(name='pit_big_table_whole_market_trades_history', con=context.resources.dwh.get_engine(), if_exists='append', index=False)

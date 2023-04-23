@@ -31,6 +31,8 @@ def extract_from_c3vault(context) -> List[dict]:
             h_symbols USING(h_symbol_id)
         LEFT JOIN
             h_exchanges USING(h_exchange_id)
+        WHERE
+            h_exchanges.h_exchange_name LIKE '%cex_balance_screener%'
         ORDER BY
             h_exchanges.h_exchange_name
     '''
@@ -67,7 +69,4 @@ def load_to_dwh(context, df: List[list]) -> None:
         concat_df = concat_df.append(mini_df, ignore_index=True)
         context.resources.logger.info(mini_df.head())
     concat_df['pit_ts'] = now
-    context.resources.dwh.get_client().insert_df(
-        table='pit_big_table_account_balances',
-        df=concat_df
-    )
+    concat_df.to_sql(name='pit_big_table_account_balances', con=context.resources.dwh.get_engine(), if_exists='append', index=False)

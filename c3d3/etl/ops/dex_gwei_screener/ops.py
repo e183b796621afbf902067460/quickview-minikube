@@ -66,7 +66,4 @@ def load_to_dwh(context, df: List[list]) -> None:
         concat_df = concat_df.append(mini_df, ignore_index=True)
         context.resources.logger.info(mini_df.head())
     concat_df['pit_ts'] = now
-    context.resources.dwh.get_client().insert_df(
-        table='pit_big_table_wallet_balances_gas',
-        df=concat_df
-    )
+    concat_df.to_sql(name='pit_big_table_wallet_balances_gas', con=context.resources.dwh.get_engine(), if_exists='append', index=False)

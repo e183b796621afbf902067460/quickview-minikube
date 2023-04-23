@@ -47,7 +47,8 @@ def extract_from_d3vault(context) -> List[dict]:
         LEFT JOIN
             h_chains ON l_addresses_chains0.h_chain_id = h_chains.h_chain_id
         WHERE
-            h_specifications.h_specification_name = 'lending'
+            h_specifications.h_specification_name = 'lending' AND
+            h_protocols.h_protocol_name LIKE '%dex_borrow_screener%'
         ORDER BY
             h_protocols.h_protocol_name
     '''
@@ -87,7 +88,4 @@ def load_to_dwh(context, df: List[list]) -> None:
         concat_df = concat_df.append(mini_df, ignore_index=True)
         context.resources.logger.info(mini_df.head())
     concat_df['pit_ts'] = now
-    context.resources.dwh.get_client().insert_df(
-        table='pit_big_table_hedge_to_borrows',
-        df=concat_df
-    )
+    concat_df.to_sql(name='pit_big_table_hedge_to_borrows', con=context.resources.dwh.get_engine(), if_exists='append', index=False)
