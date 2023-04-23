@@ -42,7 +42,7 @@ def extract_from_d3vault(context) -> List[dict]:
             h_chains USING(h_chain_id)
         WHERE
             h_specifications.h_specification_name = 'dex' AND
-            h_protocols.h_protocol_name LIKE '%dex_screener%'
+            h_protocols.h_protocol_name LIKE '%%dex_screener%%'
         ORDER BY
             h_protocols.h_protocol_name
     '''

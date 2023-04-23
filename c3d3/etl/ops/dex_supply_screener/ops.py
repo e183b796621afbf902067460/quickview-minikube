@@ -48,7 +48,7 @@ def extract_from_d3vault(context) -> List[dict]:
             h_chains ON l_addresses_chains0.h_chain_id = h_chains.h_chain_id
         WHERE
             h_specifications.h_specification_name = 'lending' AND
-            h_protocols.h_protocol_name LIKE '%dex_supply_screener%'
+            h_protocols.h_protocol_name LIKE '%%dex_supply_screener%%'
         ORDER BY
             h_protocols.h_protocol_name
     '''

@@ -32,7 +32,7 @@ def extract_from_c3vault(context) -> List[dict]:
         LEFT JOIN
             h_exchanges USING(h_exchange_id)
         WHERE
-            h_exchanges.h_exchange_name LIKE '%cex_balance_screener%'
+            h_exchanges.h_exchange_name LIKE '%%cex_balance_screener%%'
         ORDER BY
             h_exchanges.h_exchange_name
     '''
