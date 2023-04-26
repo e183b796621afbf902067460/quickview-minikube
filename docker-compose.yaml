@@ -61,7 +61,9 @@ services:
       - c3d3
 
   rabbitmq:
-    image: rabbitmq:3.11-management-alpine
+    image: rabbitmq:3.10.7-management
+    hostname: rabbitmq
+    restart: always
     networks:
       - c3d3
     volumes:
@@ -73,6 +75,7 @@ services:
       RABBITMQ_DEFAULT_USER: rabbitmq
       RABBITMQ_DEFAULT_PASS: rabbitmq
       RABBITMQ_DEFAULT_VHOST: dagster
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: -rabbit disk_free_limit 2147483648 log_levels [{connection, error}, {default, error}]
     healthcheck:
       test: [ "CMD", "nc", "-z", "0.0.0.0", "5672" ]
       interval: 5s
@@ -90,9 +93,11 @@ services:
       - c3d3
     depends_on:
       - rabbitmq
+    restart: always
 
   minio:
     image: minio/minio:latest
+    restart: always
     ports:
       - '9000:9000'
       - '9090:9090'

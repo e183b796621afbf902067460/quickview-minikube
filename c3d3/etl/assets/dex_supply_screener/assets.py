@@ -35,7 +35,7 @@ def get_overview(context, configs: dict) -> List[list]:
             },
             inplace=True
         )
-        return df
+        return raw
 
     node = HTTPNode(uri=context.resources.fernet.decrypt(configs['network_rpc_node'].encode()).decode())
     handler = D3Bridge(
