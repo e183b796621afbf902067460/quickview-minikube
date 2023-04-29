@@ -1,5 +1,5 @@
 # C3D3 Dagster
-Depends on: [c3d3-research-framework](https://github.com/e183b796621afbf902067460/c3d3-research-framework).
+Depends on: [c3d3-framework](https://github.com/e183b796621afbf902067460/c3d3-framework).
 
 ---
 

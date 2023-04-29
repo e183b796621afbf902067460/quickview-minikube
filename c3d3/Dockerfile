@@ -15,4 +15,4 @@ COPY workspace.yaml ./
 COPY dagster.yaml ./
 COPY celery.yaml ./
 
-RUN pip install git+https://github.com/e183b796621afbf902067460/c3d3-research-framework.git#egg=c3d3
+RUN pip install git+https://github.com/e183b796621afbf902067460/c3d3-framework.git#egg=c3d3
