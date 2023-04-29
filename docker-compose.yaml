@@ -116,6 +116,7 @@ services:
     build:
       context: ./c3d3
       dockerfile: Dockerfile
+    hostname: worker
     entrypoint: [ "dagster-celery", "worker", "start", "--loglevel=info", "-A", "dagster_celery.app", "-y", "celery.yaml" ]
     restart: always
     environment:
