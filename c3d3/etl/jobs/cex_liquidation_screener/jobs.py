@@ -40,7 +40,7 @@ from etl.resources.serializers.resource import df_serializer
         }
     },
     tags={
-        MAX_RUNTIME_SECONDS_TAG: 60
+        MAX_RUNTIME_SECONDS_TAG: 60 * 2
     }
 )
 def dag():
