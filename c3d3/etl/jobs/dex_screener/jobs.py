@@ -1,4 +1,4 @@
-from dagster import job
+from dagster import job, MAX_RUNTIME_SECONDS_TAG
 from dagster_aws.s3.io_manager import s3_pickle_io_manager
 from dagster_aws.s3.resources import s3_resource
 import os
@@ -38,6 +38,9 @@ from etl.resources.serializers.resource import df_serializer
                 }
             }
         }
+    },
+    tags={
+        MAX_RUNTIME_SECONDS_TAG: 60 * 5
     }
 )
 def dag():
