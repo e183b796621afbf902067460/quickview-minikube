@@ -26,3 +26,6 @@ load_from:
   - python_file:
       relative_path: etl/definitions/cex_liquidation_screener/definitions.py
       attribute: cex_liquidation_screener
+  - python_file:
+      relative_path: etl/definitions/_analytics_adj/definitions.py
+      attribute: _analytics_adj
