@@ -38,9 +38,10 @@ def _calc_win(row: pd.Series, df: pd.DataFrame):
 
 
 @op(
-    name='configs'
+    name='configs',
+    out=DynamicOut(dict)
 )
-def _get_c3d3(context) -> dict:
+def _get_c3d3(context) -> List[dict]:
 
     for k, v in CFGS.items():
 
