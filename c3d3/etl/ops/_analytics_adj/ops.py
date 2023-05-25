@@ -187,7 +187,7 @@ def _etl(context, configs: dict) -> None:
             FROM
                 pit_big_table_whole_market_trades_history
             WHERE
-                h_exchange_name = '{BinanceSpotCexScreenerHandler.key}' AND
+                h_exchange_name = '{BinanceUsdtmCexScreenerHandler.key}' AND
                 h_ticker_name = 'USDCUSDT' AND
                 pit_ts BETWEEN '{ts_down_border}' AND '{ts_up_border}'
         '''
