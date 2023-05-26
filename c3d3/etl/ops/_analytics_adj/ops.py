@@ -33,7 +33,7 @@ CFGS = {
 }
 
 
-def _calc_win(row: pd.Series, df: pd.DataFrame):
+def _calc_win(row: pd.Series, df: pd.DataFrame) -> pd.DataFrame:
     return df[(df['pit_ts'] <= row['pit_ts'] - datetime.timedelta(seconds=3)) & (df['pit_ts'] >= row['pit_ts'] - datetime.timedelta(seconds=6))]
 
 
@@ -73,7 +73,7 @@ def _get_c3d3(context) -> List[dict]:
 )
 def _etl(context, configs: dict) -> None:
     now = datetime.datetime.utcnow()
-    delta = now - datetime.timedelta(hours=1)
+    delta = (now - datetime.timedelta(hours=3)).timestamp()
 
     dwh_engine, dwh_client = context.resources.dwh.get_engine(), context.resources.dwh.get_client()
 
@@ -117,7 +117,7 @@ def _etl(context, configs: dict) -> None:
                 h_pool_address = '{configs['pool_address']}' AND
                 h_network_name = '{configs['network_name']}' AND
                 h_protocol_name = '{configs['protocol_name']}' AND
-                pit_ts > '{ts_down_border}'
+                pit_ts > {ts_down_border}
             GROUP BY
                 pit_symbol,
                 pit_tx_hash,
@@ -152,7 +152,7 @@ def _etl(context, configs: dict) -> None:
         WHERE
             h_exchange_name = '{configs['exchange_name']}' AND
             h_ticker_name = '{configs['ticker_name']}' AND
-            pit_ts > '{ts_down_border}'
+            pit_ts > {ts_down_border}
     '''
     d3_df = pd.read_sql(sql=d3_q, con=dwh_engine)
     c3_df = pd.read_sql(sql=c3_q, con=dwh_engine)
@@ -190,7 +190,7 @@ def _etl(context, configs: dict) -> None:
             WHERE
                 h_exchange_name = '{BinanceUsdtmCexScreenerHandler.key}' AND
                 h_ticker_name = 'USDCUSDT' AND
-                pit_ts BETWEEN '{ts_down_border}' AND '{ts_up_border}'
+                pit_ts BETWEEN {ts_down_border} AND {ts_up_border.timestamp()}
         '''
         adj_df = pd.read_sql(sql=adj_q, con=dwh_engine)
         adj_ohlc_df = adj_df.set_index('pit_ts').pit_price.resample('S').ohlc().reset_index().ffill().bfill()
