@@ -11,7 +11,8 @@ from c3d3.infrastructure.c3.handlers.cex_screener.binance.spot.handler import Bi
 from c3d3.infrastructure.d3.handlers.dex_screener.quickswap.v3.handler import QuickSwapV3DexScreenerHandler
 
 
-_CEX, _DEX, _SIZE, _IS_ADJUST = 'cex', 'dex', 'size', 'is_adjust'
+_CEX, _DEX, _SIZE  = 'cex', 'dex', 'size'
+_IS_ADJUST, _IS_REVERSE = 'is_adjust', 'is_reverse'
 _H_EXCHANGE_NAME, _H_TICKER_NAME = 'h_exchange_name', 'h_ticker_name'
 _H_POOL_ADDRESS, _H_PROTOCOL_NAME, _H_NETWORK_NAME = 'h_pool_address', 'h_protocol_name', 'h_network_name'
 
@@ -28,7 +29,8 @@ CFGS = {
             _H_TICKER_NAME: 'ETHUSDT'
         },
         _SIZE: 2,
-        _IS_ADJUST: True
+        _IS_ADJUST: True,
+        _IS_REVERSE: True
     }
 }
 
@@ -47,17 +49,19 @@ def _get_c3d3(context) -> List[dict]:
 
         pool_address, protocol_name, network_name = v[_DEX][_H_POOL_ADDRESS], v[_DEX][_H_PROTOCOL_NAME], v[_DEX][_H_NETWORK_NAME]
         exchange_name, ticker_name = v[_CEX][_H_EXCHANGE_NAME], v[_CEX][_H_TICKER_NAME]
-        size, is_adjust = v[_SIZE], v[_IS_ADJUST]
+        size = v[_SIZE]
+        is_adjust, is_reverse = v[_IS_ADJUST], v[_IS_REVERSE]
 
         yield DynamicOutput(
             {
-                'pool_address': pool_address,
-                'protocol_name': protocol_name,
-                'network_name': network_name,
-                'exchange_name': exchange_name,
-                'ticker_name': ticker_name,
-                'size': size,
-                'is_adjust': is_adjust
+                _H_POOL_ADDRESS: pool_address,
+                _H_PROTOCOL_NAME: protocol_name,
+                _H_NETWORK_NAME: network_name,
+                _H_EXCHANGE_NAME: exchange_name,
+                _H_TICKER_NAME: ticker_name,
+                _SIZE: size,
+                _IS_ADJUST: is_adjust,
+                _IS_REVERSE: is_reverse
             },
             mapping_key=f'subtask_for_{network_name}_{protocol_name}_{pool_address}_{exchange_name}_{ticker_name}'
         )
@@ -83,11 +87,11 @@ def _etl(context, configs: dict) -> None:
         FROM 
             pit_big_table_analytics_adj 
         WHERE 
-            h_pool_address = '{configs['pool_address']}' AND
-            h_protocol_name = '{configs['protocol_name']}' AND
-            h_network_name = '{configs['network_name']}' AND
-            h_exchange_name = '{configs['exchange_name']}' AND
-            h_ticker_name = '{configs['ticker_name']}'
+            h_pool_address = '{configs[_H_POOL_ADDRESS]}' AND
+            h_protocol_name = '{configs[_H_PROTOCOL_NAME]}' AND
+            h_network_name = '{configs[_H_NETWORK_NAME]}' AND
+            h_exchange_name = '{configs[_H_EXCHANGE_NAME]}' AND
+            h_ticker_name = '{configs[_H_TICKER_NAME]}'
     '''
     ts_down_border = dwh_client.query(ts_q).result_rows[0][0]
     ts_down_border = ts_down_border if ts_down_border.strftime('%Y') != '1970' or not ts_down_border else delta
@@ -114,9 +118,9 @@ def _etl(context, configs: dict) -> None:
             FROM 
                 pit_big_table_bids_and_asks
             WHERE
-                h_pool_address = '{configs['pool_address']}' AND
-                h_network_name = '{configs['network_name']}' AND
-                h_protocol_name = '{configs['protocol_name']}' AND
+                h_pool_address = '{configs[_H_POOL_ADDRESS]}' AND
+                h_network_name = '{configs[_H_NETWORK_NAME]}' AND
+                h_protocol_name = '{configs[_H_PROTOCOL_NAME]}' AND
                 pit_ts > {ts_down_border}
             GROUP BY
                 pit_symbol,
@@ -131,8 +135,16 @@ def _etl(context, configs: dict) -> None:
             pit_amount0 / POW(10, pit_decimals0) AS pit_amount0,
             pit_amount1 / POW(10, pit_decimals1) AS pit_amount1,
             ABS(pit_amount1) AS pit_usd_size,
-            ABS(((pit_liquidity * ((1 / (({configs['size']} * POW(10, pit_decimals0) * (1 - pit_fee) / pit_liquidity) + 1 / (pit_sqrt_p / POW(2, 96)))) - pit_sqrt_p / POW(2, 96))) / POW(10, pit_decimals1)) / {configs['size']}) AS pit_bid,
-            ABS({configs['size']} * pit_bid / ((POW(2, 96) / pit_sqrt_p - 1 / (pit_sqrt_p / POW(2, 96) - {configs['size']} * pit_bid * POW(10, pit_decimals1) * (1 - pit_fee) / pit_liquidity)) * pit_liquidity / POW(10, pit_decimals0))) AS pit_ask,
+            if(
+                {configs[_IS_REVERSE]}, 
+                1 / ABS({configs[_SIZE]} / ((POW(2, 96) / pit_sqrt_p - 1 / (pit_sqrt_p / POW(2, 96) - {configs[_SIZE]} * POW(10, pit_decimals0) * (1 - pit_fee) / pit_liquidity)) * pit_liquidity / POW(10, pit_decimals1))), 
+                ABS(((pit_liquidity * ((1 / (({configs[_SIZE]} * POW(10, pit_decimals0) * (1 - pit_fee) / pit_liquidity) + 1 / (pit_sqrt_p / POW(2, 96)))) - pit_sqrt_p / POW(2, 96))) / POW(10, pit_decimals1)) / {configs[_SIZE]})
+            ) AS pit_bid,
+            if(
+                {configs[_IS_REVERSE]},
+                1 / ABS(((pit_liquidity * ((1 / (({configs[_SIZE]} * pit_bid * POW(10, pit_decimals1) * (1 - pit_fee) / pit_liquidity) + 1 / (pit_sqrt_p / POW(2, 96)))) - pit_sqrt_p / POW(2, 96))) / POW(10, pit_decimals0)) / ({configs[_SIZE]} * pit_bid)),
+                ABS({configs[_SIZE]} * pit_bid / ((POW(2, 96) / pit_sqrt_p - 1 / (pit_sqrt_p / POW(2, 96) - {configs[_SIZE]} * pit_bid * POW(10, pit_decimals1) * (1 - pit_fee) / pit_liquidity)) * pit_liquidity / POW(10, pit_decimals0)))
+            ) AS pit_ask,
             pit_index_position_in_the_block,
             pit_effective_gas_price * pit_gas_used / POW(10, 18) AS pit_gwei,
             pit_effective_gas_price / POW(10, 9) AS pit_gas_price,
@@ -150,8 +162,8 @@ def _etl(context, configs: dict) -> None:
         FROM
             pit_big_table_whole_market_trades_history
         WHERE
-            h_exchange_name = '{configs['exchange_name']}' AND
-            h_ticker_name = '{configs['ticker_name']}' AND
+            h_exchange_name = '{configs[_H_EXCHANGE_NAME]}' AND
+            h_ticker_name = '{configs[_H_TICKER_NAME]}' AND
             pit_ts > {ts_down_border}
     '''
     d3_df = pd.read_sql(sql=d3_q, con=dwh_engine)
@@ -180,7 +192,7 @@ def _etl(context, configs: dict) -> None:
         inplace=True
     )
 
-    if configs['is_adjust']:
+    if configs[_IS_ADJUST]:
         adj_q = f'''
             SELECT
                 pit_price,
@@ -232,11 +244,11 @@ def _etl(context, configs: dict) -> None:
     df['pit_gross'] = df.apply(lambda x: ((x.pit_lag_sell_price - (x.pit_lag_sell_price * 0.01)) - x.pit_dex_price) * abs(x.pit_amount0) if x.pit_side == 'BUY' else (x.pit_dex_price - (x.pit_lag_buy_price - (x.pit_lag_buy_price * 0.01))) * abs(x.pit_amount0), axis=1)
     df['pit_net'] = df.apply(lambda x: (((x.pit_lag_sell_price - (x.pit_lag_sell_price * 0.01)) - x.pit_dex_price) * abs(x.pit_amount0 - (x.pit_amount0 * x.pit_dex_fee))) - (x.pit_gwei * x.pit_gas_usd_price) if x.pit_side == 'BUY' else ((x.pit_dex_price - (x.pit_lag_buy_price - (x.pit_lag_buy_price * 0.01))) * abs(x.pit_amount0 - (x.pit_amount0 * x.pit_dex_fee)) - (x.pit_gwei * x.pit_gas_usd_price)), axis=1)
 
-    df['h_network_name'] = configs['network_name']
-    df['h_protocol_name'] = configs['protocol_name']
-    df['h_pool_address'] = configs['pool_address']
-    df['h_exchange_name'] = configs['exchange_name']
-    df['h_ticker_name'] = configs['ticker_name']
+    df['h_network_name'] = configs[_H_NETWORK_NAME]
+    df['h_protocol_name'] = configs[_H_PROTOCOL_NAME]
+    df['h_pool_address'] = configs[_H_POOL_ADDRESS]
+    df['h_exchange_name'] = configs[_H_EXCHANGE_NAME]
+    df['h_ticker_name'] = configs[_H_TICKER_NAME]
 
     df = df[
         [
