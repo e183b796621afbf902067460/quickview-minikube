@@ -1,7 +1,9 @@
 from typing import List
 
-from dagster import op, DynamicOut, DynamicOutput
+from dagster import op, DynamicOut, DynamicOutput, RetryRequested
 import pandas as pd
+
+from etl.resources.w3sleepy.resource import W3Sleepy, MAX_RETRIES
 
 
 @op(
@@ -10,7 +12,8 @@ import pandas as pd
         'd3vault_research',
         'logger'
     },
-    out=DynamicOut(dict)
+    out=DynamicOut(dict),
+    retry_policy=W3Sleepy
 )
 def extract_from_d3vault(context) -> List[dict]:
     query = '''
@@ -81,4 +84,8 @@ def load_to_dwh(context, df: List[list]) -> None:
     for mini_df in df:
         mini_df = context.resources.df_serializer.df_from_list(mini_df)
         concat_df = concat_df.append(mini_df, ignore_index=True)
-    concat_df.to_sql(name='pit_big_table_bids_and_asks', con=context.resources.dwh.get_engine(), if_exists='append', index=False)
+
+    try:
+        concat_df.to_sql(name='pit_big_table_bids_and_asks', con=context.resources.dwh.get_engine(), if_exists='append', index=False)
+    except ValueError as exc:
+        raise RetryRequested(max_retries=MAX_RETRIES, seconds_to_wait=.5) from exc
