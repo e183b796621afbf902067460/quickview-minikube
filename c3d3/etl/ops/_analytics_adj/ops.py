@@ -109,7 +109,7 @@ def _etl(context, configs: dict) -> None:
             h_ticker_name = '{configs[_H_TICKER_NAME]}'
     '''
     ts_down_border = dwh_client.query(ts_q).result_rows[0][0]
-    ts_down_border = ts_down_border if ts_down_border.strftime('%Y') != '1970' or not ts_down_border else delta
+    ts_down_border = ts_down_border.timestamp() if ts_down_border.strftime('%Y') != '1970' or not ts_down_border else delta
 
     d3_q = f'''
         WITH dropped_duplicates_view AS (
