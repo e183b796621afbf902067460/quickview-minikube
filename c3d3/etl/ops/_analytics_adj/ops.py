@@ -1,7 +1,7 @@
 from typing import List
 import datetime
 
-from dagster import op, DynamicOut, DynamicOutput
+from dagster import op, DynamicOut, DynamicOutput, DagsterInstance
 import pandas as pd
 
 from c3d3.domain.d3.adhoc.chains.polygon.chain import Polygon
@@ -11,7 +11,7 @@ from c3d3.infrastructure.c3.handlers.cex_screener.binance.spot.handler import Bi
 from c3d3.infrastructure.d3.handlers.dex_screener.quickswap.v3.handler import QuickSwapV3DexScreenerHandler
 
 
-_CEX, _DEX, _SIZE  = 'cex', 'dex', 'size'
+_CEX, _DEX, _SIZE = 'cex', 'dex', 'size'
 _IS_ADJUST, _IS_REVERSE = 'is_adjust', 'is_reverse'
 _H_EXCHANGE_NAME, _H_TICKER_NAME = 'h_exchange_name', 'h_ticker_name'
 _H_POOL_ADDRESS, _H_PROTOCOL_NAME, _H_NETWORK_NAME = 'h_pool_address', 'h_protocol_name', 'h_network_name'
@@ -31,6 +31,21 @@ CFGS = {
         _SIZE: 2,
         _IS_ADJUST: True,
         _IS_REVERSE: True
+    },
+    # Polygon WMATIC/USDC QuickV3 & MATICUSDT Binance USDT-M
+    2: {
+        _DEX: {
+            _H_POOL_ADDRESS: '0xAE81FAc689A1b4b1e06e7ef4a2ab4CD8aC0A087D',
+            _H_PROTOCOL_NAME: QuickSwapV3DexScreenerHandler.key,
+            _H_NETWORK_NAME: Polygon.name
+        },
+        _CEX: {
+            _H_EXCHANGE_NAME: BinanceUsdtmCexScreenerHandler.key,
+            _H_TICKER_NAME: 'MATICUSDT'
+        },
+        _SIZE: 5000,
+        _IS_ADJUST: True,
+        _IS_REVERSE: False
     }
 }
 
@@ -180,6 +195,9 @@ def _etl(context, configs: dict) -> None:
 
     d3_df = d3_df[d3_df['pit_ts'] <= ts_up_border]
     c3_df = c3_df[c3_df['pit_ts'] <= ts_up_border]
+
+    if d3_df.empty or c3_df.empty:
+        return
 
     c3_ohlc_df = c3_df.set_index('pit_ts').pit_price.resample('S').ohlc().reset_index().ffill().bfill()
     c3_ohlc_df.rename(
