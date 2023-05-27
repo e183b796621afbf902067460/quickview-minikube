@@ -5,7 +5,7 @@ from dagster_aws.s3.resources import s3_resource
 from etl.executors.celery.executor import celery_executor
 from etl.ops._analytics_adj.ops import _etl, _get_c3d3
 from etl.jobs._analytics_adj.jobs import dag
-from etl.schedules._analytics_adj.schedules import every_15th_minute
+from etl.schedules._analytics_adj.schedules import every_hour
 from etl.resources.logger.resource import logger
 from etl.resources.dwh.resource import dwh
 from etl.resources.serializers.resource import df_serializer
@@ -25,6 +25,6 @@ _analytics_adj = Definitions(
         "io_manager": s3_pickle_io_manager,
         "s3": s3_resource
     },
-    schedules=[every_15th_minute],
+    schedules=[every_hour],
     executor=celery_executor
 )
