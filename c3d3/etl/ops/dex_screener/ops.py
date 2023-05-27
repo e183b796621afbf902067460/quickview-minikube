@@ -12,8 +12,7 @@ from etl.resources.w3sleepy.resource import W3Sleepy, MAX_RETRIES
         'd3vault_research',
         'logger'
     },
-    out=DynamicOut(dict),
-    retry_policy=W3Sleepy
+    out=DynamicOut(dict)
 )
 def extract_from_d3vault(context) -> List[dict]:
     query = '''
@@ -77,7 +76,8 @@ def extract_from_d3vault(context) -> List[dict]:
         'dwh',
         'logger',
         'df_serializer'
-    }
+    },
+    retry_policy=W3Sleepy
 )
 def load_to_dwh(context, df: List[list]) -> None:
     concat_df = pd.DataFrame()
