@@ -92,7 +92,7 @@ def _get_c3d3(context) -> List[dict]:
 )
 def _etl(context, configs: dict) -> None:
     now = datetime.datetime.utcnow()
-    delta = (now - datetime.timedelta(hours=12)).timestamp()
+    delta = (now - datetime.timedelta(hours=48)).timestamp()
 
     dwh_engine, dwh_client, log = context.resources.dwh.get_engine(), context.resources.dwh.get_client(), context.resources.logger
 
