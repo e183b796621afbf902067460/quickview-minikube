@@ -1,7 +1,7 @@
 from typing import List
 import datetime
 
-from dagster import op, DynamicOut, DynamicOutput, DagsterInstance
+from dagster import op, DynamicOut, DynamicOutput
 import pandas as pd
 
 from c3d3.domain.d3.adhoc.chains.polygon.chain import Polygon
@@ -92,7 +92,7 @@ def _get_c3d3(context) -> List[dict]:
 )
 def _etl(context, configs: dict) -> None:
     now = datetime.datetime.utcnow()
-    delta = (now - datetime.timedelta(hours=3)).timestamp()
+    delta = (now - datetime.timedelta(hours=12)).timestamp()
 
     dwh_engine, dwh_client, log = context.resources.dwh.get_engine(), context.resources.dwh.get_client(), context.resources.logger
 
@@ -220,7 +220,7 @@ def _etl(context, configs: dict) -> None:
             FROM
                 pit_big_table_whole_market_trades_history
             WHERE
-                h_exchange_name = '{BinanceUsdtmCexScreenerHandler.key}' AND
+                h_exchange_name = '{BinanceSpotCexScreenerHandler.key}' AND
                 h_ticker_name = 'USDCUSDT' AND
                 pit_ts BETWEEN {ts_down_border} AND {ts_up_border.timestamp()}
         '''
@@ -261,8 +261,8 @@ def _etl(context, configs: dict) -> None:
     df['pit_buy_tt'], df['pit_sell_tt'] = df['_pit_lag_bid'] / df['_pit_lag_low_min'] - 1, df['_pit_lag_high_max'] / df['_pit_lag_ask'] - 1
     df['pit_lag_buy_price'], df['pit_lag_sell_price'] = df['_pit_lag_low_min'], df['_pit_lag_high_max']
 
-    df['pit_gross'] = df.apply(lambda x: ((x.pit_lag_sell_price - (x.pit_lag_sell_price * 0.01)) - x.pit_dex_price) * abs(x.pit_amount0) if x.pit_side == 'BUY' else (x.pit_dex_price - (x.pit_lag_buy_price - (x.pit_lag_buy_price * 0.01))) * abs(x.pit_amount0), axis=1)
-    df['pit_net'] = df.apply(lambda x: (((x.pit_lag_sell_price - (x.pit_lag_sell_price * 0.01)) - x.pit_dex_price) * abs(x.pit_amount0 - (x.pit_amount0 * x.pit_dex_fee))) - (x.pit_gwei * x.pit_gas_usd_price) if x.pit_side == 'BUY' else ((x.pit_dex_price - (x.pit_lag_buy_price - (x.pit_lag_buy_price * 0.01))) * abs(x.pit_amount0 - (x.pit_amount0 * x.pit_dex_fee)) - (x.pit_gwei * x.pit_gas_usd_price)), axis=1)
+    df['pit_gross'] = df.apply(lambda x: ((x.pit_lag_sell_price - (x.pit_lag_sell_price * 0.0002)) - x.pit_dex_price) * abs(x.pit_amount0) if x.pit_side == 'BUY' else (x.pit_dex_price - (x.pit_lag_buy_price - (x.pit_lag_buy_price * 0.0002))) * abs(x.pit_amount0), axis=1)
+    df['pit_net'] = df.apply(lambda x: (((x.pit_lag_sell_price - (x.pit_lag_sell_price * 0.0002)) - x.pit_dex_price) * abs(x.pit_amount0 - (x.pit_amount0 * x.pit_dex_fee))) - (x.pit_gwei * x.pit_gas_usd_price) if x.pit_side == 'BUY' else ((x.pit_dex_price - (x.pit_lag_buy_price - (x.pit_lag_buy_price * 0.0002))) * abs(x.pit_amount0 - (x.pit_amount0 * x.pit_dex_fee)) - (x.pit_gwei * x.pit_gas_usd_price)), axis=1)
 
     df['h_network_name'] = configs[_H_NETWORK_NAME]
     df['h_protocol_name'] = configs[_H_PROTOCOL_NAME]
