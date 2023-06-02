@@ -91,8 +91,9 @@ def _get_c3d3(context) -> List[dict]:
     }
 )
 def _etl(context, configs: dict) -> None:
-    now = datetime.datetime.utcnow()
-    delta = (now - datetime.timedelta(hours=48)).timestamp()
+    now_dt = datetime.datetime.utcnow()
+    delta_dt = now_dt - datetime.timedelta(days=7)
+    delta_ts = delta_dt.timestamp()
 
     dwh_engine, dwh_client, log = context.resources.dwh.get_engine(), context.resources.dwh.get_client(), context.resources.logger
 
@@ -109,7 +110,12 @@ def _etl(context, configs: dict) -> None:
             h_ticker_name = '{configs[_H_TICKER_NAME]}'
     '''
     ts_down_border_dt = dwh_client.query(ts_q).result_rows[0][0]
-    ts_down_border = ts_down_border_dt.timestamp() if ts_down_border_dt.strftime('%Y') != '1970' or not ts_down_border_dt else delta
+    ts_down_border_ts = ts_down_border_dt.timestamp() if ts_down_border_dt.strftime('%Y') != '1970' or not ts_down_border_dt else delta_ts
+
+    if now_dt - datetime.datetime.fromtimestamp(ts_down_border_ts / 10 ** 9) > datetime.timedelta(days=1):
+        now_dt = delta_dt + datetime.timedelta(days=1)
+
+    now_ts = now_dt.timestamp()
 
     d3_q = f'''
         WITH dropped_duplicates_view AS (
@@ -136,7 +142,8 @@ def _etl(context, configs: dict) -> None:
                 h_pool_address = '{configs[_H_POOL_ADDRESS]}' AND
                 h_network_name = '{configs[_H_NETWORK_NAME]}' AND
                 h_protocol_name = '{configs[_H_PROTOCOL_NAME]}' AND
-                pit_ts > {ts_down_border}
+                pit_ts > {ts_down_border_ts} AND
+                pit_ts < {now_ts}
             GROUP BY
                 pit_symbol,
                 pit_tx_hash,
@@ -179,7 +186,8 @@ def _etl(context, configs: dict) -> None:
         WHERE
             h_exchange_name = '{configs[_H_EXCHANGE_NAME]}' AND
             h_ticker_name = '{configs[_H_TICKER_NAME]}' AND
-            pit_ts > {ts_down_border}
+            pit_ts > {ts_down_border_ts} AND
+            pit_ts < {now_ts}
     '''
     d3_df = pd.read_sql(sql=d3_q, con=dwh_engine)
     c3_df = pd.read_sql(sql=c3_q, con=dwh_engine)
@@ -222,7 +230,7 @@ def _etl(context, configs: dict) -> None:
             WHERE
                 h_exchange_name = '{BinanceSpotCexScreenerHandler.key}' AND
                 h_ticker_name = 'USDCUSDT' AND
-                pit_ts BETWEEN {ts_down_border} AND {ts_up_border.timestamp()}
+                pit_ts BETWEEN {ts_down_border_ts} AND {ts_up_border.timestamp()}
         '''
         adj_df = pd.read_sql(sql=adj_q, con=dwh_engine)
         adj_ohlc_df = adj_df.set_index('pit_ts').pit_price.resample('S').ohlc().reset_index().ffill().bfill()

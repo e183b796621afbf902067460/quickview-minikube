@@ -65,9 +65,9 @@ def get_overview(context, configs: dict) -> List[list]:
             h_protocol_name = '{configs['protocol_name']}' AND
             countSubstrings('{configs['network_name']}', h_network_name) = 1
     ''').result_rows[0][0]
-    previous = previous if previous.strftime('%Y') != '1970' or not previous else now - datetime.timedelta(minutes=5)
-    if now - previous > datetime.timedelta(hours=1):
-        now = previous + datetime.timedelta(minutes=30)
+    previous = previous if previous.strftime('%Y') != '1970' or not previous else now - datetime.timedelta(days=7)
+    if now - previous > datetime.timedelta(hours=3):
+        now = previous + datetime.timedelta(minutes=60)
 
     context.resources.logger.info(f"Current timestamp: from {previous} to {now}")
 
