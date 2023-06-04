@@ -6,7 +6,7 @@ from etl.executors.celery.executor import celery_executor
 from etl.assets.dex_screener.assets import get_overview
 from etl.ops.dex_screener.ops import extract_from_d3vault, load_to_dwh
 from etl.jobs.dex_screener.jobs import dag
-from etl.schedules.dex_screener.schedules import every_5th_minute
+from etl.schedules.dex_screener.schedules import every_10th_minute
 from etl.resources.d3vault_research.resource import d3vault_research
 from etl.resources.logger.resource import logger
 from etl.resources.dwh.resource import dwh
@@ -30,6 +30,6 @@ dex_screener = Definitions(
         "io_manager": s3_pickle_io_manager,
         "s3": s3_resource
     },
-    schedules=[every_5th_minute],
+    schedules=[every_10th_minute],
     executor=celery_executor
 )
