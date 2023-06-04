@@ -143,7 +143,7 @@ def _etl(context, configs: dict) -> None:
     ts_down_border_dt = dwh_client.query(ts_q).result_rows[0][0]
     ts_down_border_ts = ts_down_border_dt.timestamp() if ts_down_border_dt.strftime('%Y') != '1970' or not ts_down_border_dt else delta_ts
 
-    ts_down_border_dt = datetime.datetime.fromtimestamp(ts_down_border_ts) if ts_down_border_ts == delta_ts else datetime.datetime.fromtimestamp(ts_down_border_ts / 10 ** 9)
+    ts_down_border_dt = datetime.datetime.fromtimestamp(ts_down_border_ts)
 
     if now_dt - ts_down_border_dt > datetime.timedelta(days=1):
         now_dt = ts_down_border_dt + datetime.timedelta(days=1)
