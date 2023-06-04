@@ -9,6 +9,7 @@ from c3d3.domain.d3.adhoc.chains.polygon.chain import Polygon
 from c3d3.infrastructure.c3.handlers.cex_screener.binance.usdtm.handler import BinanceUsdtmCexScreenerHandler
 from c3d3.infrastructure.c3.handlers.cex_screener.binance.spot.handler import BinanceSpotCexScreenerHandler
 from c3d3.infrastructure.d3.handlers.dex_screener.quickswap.v3.handler import QuickSwapV3DexScreenerHandler
+from c3d3.infrastructure.d3.handlers.dex_screener.uniswap.v3.handler import UniSwapV3DexScreenerHandler
 
 
 _CEX, _DEX, _SIZE = 'cex', 'dex', 'size'
@@ -37,6 +38,36 @@ CFGS = {
         _DEX: {
             _H_POOL_ADDRESS: '0xAE81FAc689A1b4b1e06e7ef4a2ab4CD8aC0A087D',
             _H_PROTOCOL_NAME: QuickSwapV3DexScreenerHandler.key,
+            _H_NETWORK_NAME: Polygon.name
+        },
+        _CEX: {
+            _H_EXCHANGE_NAME: BinanceUsdtmCexScreenerHandler.key,
+            _H_TICKER_NAME: 'MATICUSDT'
+        },
+        _SIZE: 5000,
+        _IS_ADJUST: True,
+        _IS_REVERSE: False
+    },
+    # Polygon WETH/USDC UniV3 & ETHUSDT Binance USDT-M
+    3: {
+        _DEX: {
+            _H_POOL_ADDRESS: '0x45dDa9cb7c25131DF268515131f647d726f50608',
+            _H_PROTOCOL_NAME: UniSwapV3DexScreenerHandler.key,
+            _H_NETWORK_NAME: Polygon.name
+        },
+        _CEX: {
+            _H_EXCHANGE_NAME: BinanceUsdtmCexScreenerHandler.key,
+            _H_TICKER_NAME: 'ETHUSDT'
+        },
+        _SIZE: 2,
+        _IS_ADJUST: True,
+        _IS_REVERSE: True
+    },
+    # Polygon WMATIC/USDC UniV3 & MATICUSDT Binance USDT-M
+    4: {
+        _DEX: {
+            _H_POOL_ADDRESS: '0xA374094527e1673A86dE625aa59517c5dE346d32',
+            _H_PROTOCOL_NAME: UniSwapV3DexScreenerHandler.key,
             _H_NETWORK_NAME: Polygon.name
         },
         _CEX: {
