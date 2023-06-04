@@ -149,6 +149,8 @@ def _etl(context, configs: dict) -> None:
 
     now_ts = now_dt.timestamp()
 
+    log.info(f"Current borders for query: from {ts_down_border_dt} to {now_dt}")
+
     d3_q = f'''
         WITH dropped_duplicates_view AS (
             SELECT
@@ -239,7 +241,7 @@ def _etl(context, configs: dict) -> None:
     if d3_df.empty or c3_df.empty:
         return
 
-    log.info(f"Current borders: from {ts_down_border_dt} to {ts_up_border}")
+    log.info(f"Current borders for df: from {ts_down_border_dt} to {ts_up_border}")
 
     c3_ohlc_df = c3_df.set_index('pit_ts').pit_price.resample('S').ohlc().reset_index().ffill().bfill()
     c3_ohlc_df.rename(
