@@ -303,7 +303,7 @@ def _etl(context, configs: dict) -> None:
 
     df['pit_down_th'] = df['pit_bid'] / df['pit_c3_low'] - 1
     df['pit_up_th'] = df['pit_c3_high'] / df['pit_ask'] - 1
-    df['pit_side'] = df.apply(lambda x: 'BUY' if x.pit_amount1 < 0 else 'SELL', axis=1)
+    df['pit_side'] = df.apply(lambda x: 'BUY' if x.pit_amount1 > 0 else 'SELL', axis=1)
 
     df = df.assign(_pit_tx_hash_lag=lambda x: x.pit_tx_hash.shift(1)).bfill()
     df['pit_is_new_tx'] = df.apply(lambda x: 0 if x.pit_tx_hash == x._pit_tx_hash_lag else 1, axis=1)
