@@ -233,13 +233,20 @@ def _etl(context, configs: dict) -> None:
     d3_max_ts = d3_df.pit_ts.max().value
     c3_max_ts = c3_df.pit_ts.max().value
 
-    ts_up_border = d3_max_ts if d3_max_ts < c3_max_ts else c3_max_ts
+    ts_up_border = min(d3_max_ts, c3_max_ts)
     ts_up_border = datetime.datetime.fromtimestamp(ts_up_border / 10 ** 9)
 
     d3_df = d3_df[d3_df['pit_ts'] <= ts_up_border]
     c3_df = c3_df[c3_df['pit_ts'] <= ts_up_border]
 
     if d3_df.empty or c3_df.empty:
+        return
+
+    d3_max_dt = d3_df.pit_ts.max()
+    c3_max_dt = c3_df.pit_ts.max()
+
+    if d3_max_dt.hour != c3_max_dt.hour:
+        log.info(f"Current borders doesn't match")
         return
 
     log.info(f"Current borders for df: from {ts_down_border_dt} to {ts_up_border}")
