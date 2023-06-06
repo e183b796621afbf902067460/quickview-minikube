@@ -244,6 +244,8 @@ def _etl(context, configs: dict) -> None:
 
     log.info(f"Current borders for df: from {ts_down_border_dt} to {ts_up_border}")
 
+    c3_df['pit_ts'] = pd.to_datetime(c3_df['pit_ts'])
+
     c3_ohlc_df = c3_df.set_index('pit_ts').pit_price.resample('S').ohlc().reset_index().ffill().bfill()
     c3_ohlc_df.rename(
         columns={
