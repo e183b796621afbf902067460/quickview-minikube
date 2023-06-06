@@ -244,8 +244,6 @@ def _etl(context, configs: dict) -> None:
 
     log.info(f"Current borders for df: from {ts_down_border_dt} to {ts_up_border}")
 
-    c3_df['pit_ts'] = pd.to_datetime(c3_df['pit_ts'])
-
     c3_ohlc_df = c3_df.set_index('pit_ts').pit_price.resample('S').ohlc().reset_index().ffill().bfill()
     c3_ohlc_df.rename(
         columns={
@@ -270,6 +268,11 @@ def _etl(context, configs: dict) -> None:
                 pit_ts BETWEEN {ts_down_border_ts} AND {ts_up_border.timestamp()}
         '''
         adj_df = pd.read_sql(sql=adj_q, con=dwh_engine)
+
+        if adj_df.empty:
+            log.info(f"There is no data to adjust")
+            return
+
         adj_ohlc_df = adj_df.set_index('pit_ts').pit_price.resample('S').ohlc().reset_index().ffill().bfill()
         adj_ohlc_df.rename(
             columns={
@@ -306,8 +309,8 @@ def _etl(context, configs: dict) -> None:
     df['pit_buy_tt'], df['pit_sell_tt'] = df['_pit_lag_bid'] / df['_pit_lag_low_min'] - 1, df['_pit_lag_high_max'] / df['_pit_lag_ask'] - 1
     df['pit_lag_buy_price'], df['pit_lag_sell_price'] = df['_pit_lag_low_min'], df['_pit_lag_high_max']
 
-    df['pit_gross'] = df.apply(lambda x: ((x.pit_lag_sell_price - (x.pit_lag_sell_price * 0.0002)) - x.pit_dex_price) * abs(x.pit_amount0) if x.pit_side == 'BUY' else (x.pit_dex_price - (x.pit_lag_buy_price - (x.pit_lag_buy_price * 0.0002))) * abs(x.pit_amount0), axis=1)
-    df['pit_net'] = df.apply(lambda x: (((x.pit_lag_sell_price - (x.pit_lag_sell_price * 0.0002)) - x.pit_dex_price) * abs(x.pit_amount0 - (x.pit_amount0 * x.pit_dex_fee))) - (x.pit_gwei * x.pit_gas_usd_price) if x.pit_side == 'BUY' else ((x.pit_dex_price - (x.pit_lag_buy_price - (x.pit_lag_buy_price * 0.0002))) * abs(x.pit_amount0 - (x.pit_amount0 * x.pit_dex_fee)) - (x.pit_gwei * x.pit_gas_usd_price)), axis=1)
+    df['pit_gross'] = df.apply(lambda x: (x.pit_lag_sell_price - x.pit_dex_price) * abs(x.pit_amount0) if x.pit_side == 'BUY' else (x.pit_dex_price - x.pit_lag_buy_price) * abs(x.pit_amount0), axis=1)
+    df['pit_net'] = df.apply(lambda x: ((x.pit_lag_sell_price - x.pit_dex_price) * abs(x.pit_amount0 - (x.pit_amount0 * x.pit_dex_fee))) - (x.pit_gwei * x.pit_gas_usd_price) if x.pit_side == 'BUY' else ((x.pit_dex_price - x.pit_lag_buy_price) * abs(x.pit_amount0 - (x.pit_amount0 * x.pit_dex_fee)) - (x.pit_gwei * x.pit_gas_usd_price)), axis=1)
 
     df['h_network_name'] = configs[_H_NETWORK_NAME]
     df['h_protocol_name'] = configs[_H_PROTOCOL_NAME]
