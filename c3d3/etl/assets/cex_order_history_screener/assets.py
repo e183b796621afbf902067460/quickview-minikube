@@ -66,6 +66,8 @@ def get_overview(context, configs: dict) -> List[list]:
         factory_key=CexOrderHistoryScreenerFactory.key,
         object_key=configs['exchange_name']
     ).init_object(
+        api=context.resources.fernet.decrypt(configs['label_api_key'].encode()).decode(),
+        secret=context.resources.fernet.decrypt(configs['label_secret_key'].encode()).decode(),
         ticker=configs['ticker_name'],
         label=configs['label_name'],
         start_time=previous,
