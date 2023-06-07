@@ -91,5 +91,9 @@ def get_overview(context, configs: dict) -> List[list]:
         raise RetryRequested(max_retries=MAX_RETRIES, seconds_to_wait=.5) from exc
 
     df = _formatting(raw=overview)
+
+    df['pit_amount1'] = df['pit_amount1'].astype(object)
+    df['pit_liquidity'] = df['pit_liquidity'].astype(object)
+
     return context.resources.df_serializer.df_to_list(df)
 
