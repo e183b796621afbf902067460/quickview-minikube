@@ -82,4 +82,7 @@ def load_to_dwh(context, df: List[list]) -> None:
         mini_df = context.resources.df_serializer.df_from_list(mini_df)
         concat_df = concat_df.append(mini_df, ignore_index=True)
 
+    concat_df['pit_amount1'] = concat_df['pit_amount1'].astype(object)
+    concat_df['pit_liquidity'] = concat_df['pit_liquidity'].astype(object)
+
     concat_df.to_sql(name='pit_big_table_bids_and_asks', con=context.resources.dwh.get_engine(), if_exists='append', index=False)
