@@ -7,7 +7,7 @@ from etl.executors.celery.executor import celery_executor
 from etl.assets.cex_order_history_screener.assets import get_overview
 from etl.ops.cex_order_history_screener.ops import extract_from_c3vault, load_to_dwh
 from etl.jobs.cex_order_history_screener.jobs import dag
-from etl.schedules.cex_order_history_screener.schedules import every_30th_minute
+from etl.schedules.cex_order_history_screener.schedules import every_day
 
 from etl.resources.c3vault_exposure.resource import c3vault_exposure
 from etl.resources.logger.resource import logger

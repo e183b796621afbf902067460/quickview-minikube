@@ -3,8 +3,8 @@ from dagster import ScheduleDefinition
 from etl.jobs.cex_order_history_screener.jobs import dag
 
 
-every_30th_minute = ScheduleDefinition(
+every_day = ScheduleDefinition(
     name='cex_order_history_screener',
     job=dag,
-    cron_schedule="*/30 * * * *"
+    cron_schedule="@daily"
 )

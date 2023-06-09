@@ -56,8 +56,8 @@ def get_overview(context, configs: dict) -> List[list]:
                 h_label_name = '{configs['label_name']}'
         ''').result_rows[0][0]
     previous = previous if previous.strftime('%Y') != '1970' or not previous else now - datetime.timedelta(days=7)
-    if now - previous > datetime.timedelta(hours=1):
-        now = previous + datetime.timedelta(minutes=30)
+    if now - previous > datetime.timedelta(days=5):
+        now = previous + datetime.timedelta(days=1)
 
     context.resources.logger.info(f"Current timestamp: from {previous} to {now}")
 
