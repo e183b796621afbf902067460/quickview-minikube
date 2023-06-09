@@ -32,6 +32,6 @@ cex_order_history_screener = Definitions(
         "io_manager": s3_pickle_io_manager,
         "s3": s3_resource
     },
-    schedules=[every_30th_minute],
+    schedules=[every_day],
     executor=celery_executor
 )
