@@ -1,0 +1,12 @@
+quickview:
+  image:
+    repository: d41d8cd98f00b204e9800998e/quickview-streaming
+    tag: latest
+    pullPolicy: Always
+
+  replicas: 1
+
+  integrations:
+    kafka:
+      bootstrapServers: kafka-controller-0.kafka-controller-headless.kafka.svc.cluster.local:9092,kafka-controller-1.kafka-controller-headless.kafka.svc.cluster.local:9092,kafka-controller-2.kafka-controller-headless.kafka.svc.cluster.local:9092
+      topicName: topic

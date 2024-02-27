@@ -1,0 +1,83 @@
+clickhouse:
+  ## @param image.registry [default: REGISTRY_NAME] ClickHouse image registry
+  ## @param image.repository [default: REPOSITORY_NAME/clickhouse] ClickHouse image repository
+  ## @skip image.tag ClickHouse image tag (immutable tags are recommended)
+  ## @param image.pullPolicy ClickHouse image pull policy
+  image:
+    registry: docker.io
+    repository: bitnami/clickhouse
+    tag: 24.1.5
+
+    ## Specify a imagePullPolicy
+    ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+    ## ref: http://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
+    pullPolicy: IfNotPresent
+
+  ## @param shards Number of ClickHouse shards to deploy
+  shards: 1
+
+  ## @param replicaCount Number of ClickHouse replicas per shard to deploy if keeper enable, same as keeper count, keeper cluster by shards.
+  replicaCount: 1
+
+  ## @param auth.database ClickHouse database
+  auth:
+    database: clickhouse
+
+  ## @param livenessProbe.enabled Enable livenessProbe on ClickHouse containers
+  livenessProbe:
+    enabled: false
+
+  ## @param readinessProbe.enabled Enable readinessProbe on ClickHouse containers
+  readinessProbe:
+    enabled: false
+
+  ## @param podSecurityContext.enabled Enabled ClickHouse pods' Security Context
+  podSecurityContext:
+    enabled: false
+
+  ## @param containerSecurityContext.enabled Enable containers' Security Context
+  containerSecurityContext:
+    enabled: false
+
+  ## @param persistence.enabled Enable persistence using Persistent Volume Claims
+  persistence:
+    enabled: false
+
+  ## @param serviceAccount.create Specifies whether a ServiceAccount should be created
+  serviceAccount:
+    create: false
+
+  ## @param zookeeper.enabled Deploy Zookeeper subchart
+  zookeeper:
+    enabled: false
+
+  ## @param networkPolicy.enabled Specifies whether a NetworkPolicy should be created
+  networkPolicy:
+    enabled: false
+
+  ## @param extraOverridesConfigmap The name of an existing ConfigMap with extra configuration for ClickHouse
+  extraOverridesConfigmap: clickhouse-configmap
+
+  ## @param startdbScripts Dictionary of startdb scripts
+  startdbScripts:
+    script: clickhouse-client --user clickhouse --password clickhouse --queries-file /docker-entrypoint-initdb.d/docker-entrypoint-initdb.sql
+
+  ## @param extraVolumes Optionally specify extra list of additional volumes for the ClickHouse pod(s)
+  extraVolumes:
+    clickhouse:
+      name: clickhouse
+      configMap:
+        name: clickhouse-configmap
+
+  ## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts for the ClickHouse container(s)
+  extraVolumeMounts:
+    clickhouse:
+      name: clickhouse
+      mountPath: /docker-entrypoint-initdb.d
+      readOnly: false
+
+  integrations:
+    kafka:
+      brokerList: kafka.kafka.svc.cluster.local:9092
+      topicList: topic
+      groupName: q_real_time_tx_processing_ch

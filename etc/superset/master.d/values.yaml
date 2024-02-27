@@ -1,0 +1,33 @@
+superset:
+  image:
+    repository: d41d8cd98f00b204e9800998e/quickview-superset
+    tag:
+    pullPolicy:
+
+  replicas:
+
+  metadata:
+    namespace:
+
+  auth:
+    firstname:
+    lastname:
+    email:
+
+  service:
+    type:
+    host:
+    port:
+    targetPort:
+    nodePort:
+
+  integrations:
+
+    redis:
+      host:
+      port:
+      db:
+      url:
+
+    clickhouse:
+      externalName:

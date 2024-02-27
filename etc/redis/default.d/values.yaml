@@ -1,0 +1,153 @@
+redis:
+  ## @param useHostnames Use hostnames internally when announcing replication. If false, the hostname will be resolved to an IP address
+  useHostnames: true
+
+  ## @param nameResolutionThreshold Failure threshold for internal hostnames resolution
+  nameResolutionThreshold: 5
+
+  ## @param nameResolutionTimeout Timeout seconds between probes for internal hostnames resolution
+  nameResolutionTimeout: 5
+
+  diagnosticMode:
+    ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
+    enabled: false
+
+  ## @param image.registry [default: REGISTRY_NAME] Redis&reg; image registry
+  ## @param image.repository [default: REPOSITORY_NAME/redis] Redis&reg; image repository
+  ## @skip image.tag Redis&reg; image tag (immutable tags are recommended)
+  ## @param image.pullPolicy Redis&reg; image pull policy
+  image:
+    registry: docker.io
+    repository: bitnami/redis
+    tag: 7.2.4-debian-11-r5
+
+    ## Specify a imagePullPolicy
+    ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+    ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
+    pullPolicy: IfNotPresent
+
+  ## @param architecture Redis&reg; architecture. Allowed values: `standalone` or `replication`
+  architecture: standalone
+
+  auth:
+    ## @param auth.enabled Enable password authentication
+    enabled: false
+
+  master:
+    ## @param master.count Number of Redis&reg; master instances to deploy (experimental, requires additional configuration)
+    count: 1
+
+    ## @param master.containerPorts.redis Container port to open on Redis&reg; master nodes
+    containerPorts:
+      redis: 6379
+
+    ## @param master.startupProbe.enabled Enable startupProbe on Redis&reg; master nodes
+    startupProbe:
+      enabled: false
+
+    ## @param master.livenessProbe.enabled Enable livenessProbe on Redis&reg; master nodes
+    livenessProbe:
+      enabled: false
+
+    ## @param master.readinessProbe.enabled Enable readinessProbe on Redis&reg; master nodes
+    readinessProbe:
+      enabled: false
+
+    ## @param master.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
+    ## Example:
+    ## resources:
+    ##   requests:
+    ##     cpu: 2
+    ##     memory: 512Mi
+    ##   limits:
+    ##     cpu: 3
+    ##     memory: 1024Mi
+    resources:
+      requests:
+        cpu: 1
+        memory: 2Gi
+      limits:
+        cpu: 2
+        memory: 4Gi
+
+    ## @param master.podSecurityContext.enabled Enabled Redis&reg; master pods' Security Context
+    podSecurityContext:
+      enabled: false
+
+    ## @param master.containerSecurityContext.enabled Enabled Redis&reg; master containers' Security Context
+    containerSecurityContext:
+      enabled: false
+
+    ## @param master.automountServiceAccountToken Mount Service Account token in pod
+    automountServiceAccountToken: false
+
+    persistence:
+      ## @param master.persistence.enabled Enable persistence on Redis&reg; master nodes using Persistent Volume Claims
+      enabled: false
+
+    ## @param master.persistentVolumeClaimRetentionPolicy.enabled Controls if and how PVCs are deleted during the lifecycle of a StatefulSet
+    persistentVolumeClaimRetentionPolicy:
+      enabled: false
+
+    service:
+      ## @param master.service.type Redis&reg; master service type
+      type: ClusterIP
+
+      ## @param master.service.ports.redis Redis&reg; master service port
+      ports:
+        redis: 6379
+
+    serviceAccount:
+      ## @param master.serviceAccount.create Specifies whether a ServiceAccount should be created
+      create: false
+
+  sentinel:
+    ## @param sentinel.enabled Use Redis&reg; Sentinel on Redis&reg; pods.
+    enabled: false
+
+  ## @param serviceBindings.enabled Create secret for service binding (Experimental)
+  serviceBindings:
+    enabled: false
+
+  networkPolicy:
+    ## @param networkPolicy.enabled Enable creation of NetworkPolicy resources
+    enabled: true
+
+  podSecurityPolicy:
+    ## @param podSecurityPolicy.create Whether to create a PodSecurityPolicy. WARNING: PodSecurityPolicy is deprecated in Kubernetes v1.21 or later, unavailable in v1.25 or later
+    create: false
+
+    ## @param podSecurityPolicy.enabled Enable PodSecurityPolicy's RBAC rules
+    enabled: false
+
+  rbac:
+    ## @param rbac.create Specifies whether RBAC resources should be created
+    create: false
+
+  serviceAccount:
+    ## @param serviceAccount.create Specifies whether a ServiceAccount should be created
+    create: false
+
+  pdb:
+    ## @param pdb.create Specifies whether a PodDisruptionBudget should be created
+    create: false
+
+  tls:
+    ## @param tls.enabled Enable TLS traffic
+    enabled: false
+
+  metrics:
+    ## @param metrics.enabled Start a sidecar prometheus exporter to expose Redis&reg; metrics
+    enabled: false
+
+  volumePermissions:
+    ## @param volumePermissions.enabled Enable init container that changes the owner/group of the PV mount point to `runAsUser:fsGroup`
+    enabled: false
+
+  sysctl:
+    ## @param sysctl.enabled Enable init container to modify Kernel settings
+    enabled: false
+
+  ## @param useExternalDNS.enabled Enable various syntax that would enable external-dns to work.  Note this requires a working installation of `external-dns` to be usable.
+  useExternalDNS:
+    enabled: false

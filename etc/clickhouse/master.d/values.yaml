@@ -1,0 +1,82 @@
+clickhouse:
+  ## @param image.registry [default: REGISTRY_NAME] ClickHouse image registry
+  ## @param image.repository [default: REPOSITORY_NAME/clickhouse] ClickHouse image repository
+  ## @skip image.tag ClickHouse image tag (immutable tags are recommended)
+  ## @param image.pullPolicy ClickHouse image pull policy
+  image:
+    registry:
+    repository:
+    tag:
+
+    ## Specify a imagePullPolicy
+    ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+    ## ref: http://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
+    pullPolicy:
+
+  ## @param shards Number of ClickHouse shards to deploy
+  shards:
+
+  ## @param replicaCount Number of ClickHouse replicas per shard to deploy if keeper enable, same as keeper count, keeper cluster by shards.
+  replicaCount:
+
+  ## @param auth.database ClickHouse database
+  auth:
+    database:
+
+  ## @param livenessProbe.enabled Enable livenessProbe on ClickHouse containers
+  livenessProbe:
+    enabled:
+
+  ## @param readinessProbe.enabled Enable readinessProbe on ClickHouse containers
+  readinessProbe:
+    enabled:
+
+  ## @param podSecurityContext.enabled Enabled ClickHouse pods' Security Context
+  podSecurityContext:
+    enabled:
+
+  ## @param containerSecurityContext.enabled Enable containers' Security Context
+  containerSecurityContext:
+    enabled:
+
+  ## @param persistence.enabled Enable persistence using Persistent Volume Claims
+  persistence:
+    enabled:
+
+  ## @param serviceAccount.create Specifies whether a ServiceAccount should be created
+  serviceAccount:
+    create:
+
+  ## @param zookeeper.enabled Deploy Zookeeper subchart
+  zookeeper:
+    enabled:
+
+  ## @param networkPolicy.enabled Specifies whether a NetworkPolicy should be created
+  networkPolicy:
+    enabled:
+
+  ## @param extraOverridesConfigmap The name of an existing ConfigMap with extra configuration for ClickHouse
+  extraOverridesConfigmap:
+
+  ## @param startdbScripts Dictionary of startdb scripts
+  startdbScripts:
+
+  ## @param extraVolumes Optionally specify extra list of additional volumes for the ClickHouse pod(s)
+  extraVolumes:
+    clickhouse:
+      name:
+      configMap:
+        name:
+
+  ## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts for the ClickHouse container(s)
+  extraVolumeMounts:
+    clickhouse:
+      name:
+      mountPath:
+      readOnly:
+
+  integrations:
+    kafka:
+      brokerList:
+      topicList:
+      groupName:

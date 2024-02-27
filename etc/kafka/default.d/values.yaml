@@ -1,0 +1,203 @@
+kafka:
+  ## @param serviceBindings.enabled Create secret for service binding (Experimental)
+  ## Ref: https://servicebinding.io/service-provider/
+  serviceBindings:
+    enabled: false
+
+  diagnosticMode:
+    ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
+    enabled: false
+
+  ## @param image.registry [default: REGISTRY_NAME] Kafka image registry
+  ## @param image.repository [default: REPOSITORY_NAME/kafka] Kafka image repository
+  ## @skip image.tag Kafka image tag (immutable tags are recommended)
+  ## @param image.pullPolicy Kafka image pull policy
+  image:
+    registry: docker.io
+    repository: bitnami/kafka
+    tag: 3.6.1-debian-11-r6
+
+    ## Specify a imagePullPolicy
+    ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+    ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
+    pullPolicy: IfNotPresent
+
+  listeners:
+    ## @param listeners.client.name Name for the Kafka client listener
+    ## @param listeners.client.containerPort Port for the Kafka client listener
+    ## @param listeners.client.protocol Security protocol for the Kafka client listener. Allowed values are 'PLAINTEXT', 'SASL_PLAINTEXT', 'SASL_SSL' and 'SSL'
+    client:
+      containerPort: 9092
+      protocol: PLAINTEXT
+      name: CLIENT
+
+    ## @param listeners.controller.name Name for the Kafka controller listener
+    ## @param listeners.controller.containerPort Port for the Kafka controller listener
+    ## @param listeners.controller.protocol Security protocol for the Kafka controller listener. Allowed values are 'PLAINTEXT', 'SASL_PLAINTEXT', 'SASL_SSL' and 'SSL'
+    controller:
+      name: CONTROLLER
+      containerPort: 9093
+      protocol: PLAINTEXT
+
+    ## @param listeners.interbroker.name Name for the Kafka inter-broker listener
+    ## @param listeners.interbroker.containerPort Port for the Kafka inter-broker listener
+    ## @param listeners.interbroker.protocol Security protocol for the Kafka inter-broker listener. Allowed values are 'PLAINTEXT', 'SASL_PLAINTEXT', 'SASL_SSL' and 'SSL'
+    interbroker:
+      containerPort: 9094
+      protocol: PLAINTEXT
+      name: INTERNAL
+
+    ## @param listeners.external.containerPort Port for the Kafka external listener
+    ## @param listeners.external.protocol Security protocol for the Kafka external listener. . Allowed values are 'PLAINTEXT', 'SASL_PLAINTEXT', 'SASL_SSL' and 'SSL'
+    ## @param listeners.external.name Name for the Kafka external listener
+    external:
+      containerPort: 9095
+      protocol: PLAINTEXT
+      name: EXTERNAL
+
+  controller:
+    ## @param controller.replicaCount Number of Kafka controller-eligible nodes
+    ## Ignore this section if running in Zookeeper mode.
+    replicaCount: 3
+
+    ## @param controller.controllerOnly If set to true, controller nodes will be deployed as dedicated controllers, instead of controller+broker processes.
+    controllerOnly: false
+
+    ## @param controller.livenessProbe.enabled Enable livenessProbe on Kafka containers
+    livenessProbe:
+      enabled: false
+
+    ## @param controller.readinessProbe.enabled Enable readinessProbe on Kafka containers
+    readinessProbe:
+      enabled: false
+
+    ## @param controller.startupProbe.enabled Enable startupProbe on Kafka containers
+    startupProbe:
+      enabled: false
+
+    ## @param controller.resources.limits The resources limits for the container
+    ## @param controller.resources.requests The requested resources for the container
+    resources:
+      requests:
+        cpu: 4
+        memory: 2Gi
+      limits:
+        cpu: 8
+        memory: 4Gi
+
+    ## @param controller.podSecurityContext.enabled Enable security context for the pods
+    podSecurityContext:
+      enabled: false
+
+    ## @param controller.containerSecurityContext.enabled Enable Kafka containers' Security Context
+    containerSecurityContext:
+      enabled: false
+
+    ## @param controller.automountServiceAccountToken Mount Service Account token in pod
+    automountServiceAccountToken: false
+
+    ## @param controller.hostNetwork Specify if host network should be enabled for Kafka pods
+    hostNetwork: false
+
+    ## @param controller.hostIPC Specify if host IPC should be enabled for Kafka pods
+    hostIPC: false
+
+    ## @param controller.enableServiceLinks Whether information about services should be injected into pod's environment variable
+    ## The environment variables injected by service links are not used, but can lead to slow kafka boot times or slow running of the scripts when there are many services in the current namespace.
+    ## If you experience slow pod startups or slow running of the scripts you probably want to set this to `false`.
+    enableServiceLinks: true
+
+    ## Enable persistence using Persistent Volume Claims
+    ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+    persistence:
+      ## @param controller.persistence.enabled Enable Kafka data persistence using PVC, note that ZooKeeper persistence is unaffected
+      enabled: false
+
+    ## Log Persistence parameters
+    logPersistence:
+      ## @param controller.logPersistence.enabled Enable Kafka logs persistence using PVC, note that ZooKeeper persistence is unaffected
+      enabled: false
+
+  service:
+    ## @param service.type Kubernetes Service type
+    type: ClusterIP
+
+    ## @param service.ports.client Kafka svc port for client connections
+    ## @param service.ports.controller Kafka svc port for controller connections. It is used if "kraft.enabled: true"
+    ## @param service.ports.interbroker Kafka svc port for inter-broker connections
+    ## @param service.ports.external Kafka svc port for external connections
+    ports:
+      client: 9092
+      controller: 9093
+      interbroker: 9094
+      external: 9095
+
+    ## @param service.allocateLoadBalancerNodePorts Whether to allocate node ports when service type is LoadBalancer
+    ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#load-balancer-nodeport-allocation
+    allocateLoadBalancerNodePorts: false
+
+    ## @param service.externalTrafficPolicy Kafka service external traffic policy
+    ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
+    externalTrafficPolicy: Cluster
+
+  externalAccess:
+    ## @param externalAccess.enabled Enable Kubernetes external cluster access to Kafka brokers
+    enabled: false
+
+  volumePermissions:
+    ## @param volumePermissions.enabled Enable init container that changes the owner and group of the persistent volume
+    enabled: false
+
+  serviceAccount:
+    ## @param serviceAccount.create Enable creation of ServiceAccount for Kafka pods
+    create: false
+
+    ## @param serviceAccount.automountServiceAccountToken Allows auto mount of ServiceAccountToken on the serviceAccount created
+    ## Can be set to false if pods using this serviceAccount do not need to use K8s API
+    automountServiceAccountToken: false
+
+  rbac:
+    ## @param rbac.create Whether to create & use RBAC resources or not
+    ## binding Kafka ServiceAccount to a role
+    ## that allows Kafka pods querying the K8s API
+    create: false
+
+  kraft:
+    ## @param kraft.enabled Switch to enable or disable the KRaft mode for Kafka
+    enabled: true
+
+  provisioning:
+    ## @param provisioning.enabled Enable kafka provisioning Job
+    enabled: true
+
+    ## @param provisioning.numPartitions Default number of partitions for topics when unspecified
+    numPartitions: 1
+
+    ## @param provisioning.replicationFactor Default replication factor for topics when unspecified
+    replicationFactor: 1
+
+    ## @param provisioning.topics Kafka topics to provision
+    topics:
+      topic:
+        name: topic
+        config:
+          replicas:
+            insync: 1
+          leader:
+            unclean: false
+
+    serviceAccount:
+      ## @param provisioning.serviceAccount.create Enable creation of ServiceAccount for Kafka provisioning pods
+      create: false
+
+    podSecurityContext:
+      ## @param provisioning.podSecurityContext.enabled Enable security context for the pods
+      enabled: false
+
+    containerSecurityContext:
+      ## @param provisioning.containerSecurityContext.enabled Enable Kafka provisioning containers' Security Context
+      enabled: false
+
+  zookeeper:
+    ## @param zookeeper.enabled Switch to enable or disable the ZooKeeper helm chart. Must be false if you use KRaft mode.
+    enabled: false

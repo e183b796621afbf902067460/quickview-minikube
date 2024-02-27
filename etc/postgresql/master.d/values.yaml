@@ -1,0 +1,156 @@
+postgresql:
+
+  diagnosticMode:
+    ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
+    enabled:
+
+  ## @param image.registry [default: REGISTRY_NAME] PostgreSQL image registry
+  ## @param image.repository [default: REPOSITORY_NAME/postgresql] PostgreSQL image repository
+  ## @skip image.tag PostgreSQL image tag (immutable tags are recommended)
+  ## @param image.pullPolicy PostgreSQL image pull policy
+  image:
+    registry:
+    repository:
+    tag:
+
+    ## Specify a imagePullPolicy
+    ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+    ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
+    pullPolicy:
+
+  auth:
+    ## @param auth.enablePostgresUser Assign a password to the "postgres" admin user. Otherwise, remote access will be blocked for this user
+    enablePostgresUser:
+
+    ## @param auth.database Name for a custom database to create
+    database:
+
+  ## @param architecture PostgreSQL architecture (`standalone` or `replication`)
+  architecture:
+
+  ## @param containerPorts.postgresql PostgreSQL container port
+  containerPorts:
+    postgresql:
+
+  ## @param audit.logHostname Log client hostnames
+  ## @param audit.logConnections Add client log-in operations to the log file
+  ## @param audit.logDisconnections Add client log-outs operations to the log file
+  audit:
+    logHostname:
+    logConnections:
+    logDisconnections:
+
+  ## @param ldap.enabled Enable LDAP support
+  ## @param ldap.tls.enabled Se to true to enable TLS encryption
+  ldap:
+    enabled:
+    tls:
+      enabled:
+
+  ## @param postgresqlDataDir PostgreSQL data dir folder
+  postgresqlDataDir:
+
+  shmVolume:
+    ## @param shmVolume.enabled Enable emptyDir volume for /dev/shm for PostgreSQL pod(s)
+    enabled:
+
+    ## @param shmVolume.sizeLimit Set this to enable a size limit on the shm tmpfs
+    ## Note: the size of the tmpfs counts against container's memory limit
+    ## e.g:
+    ## sizeLimit: 1Gi
+    sizeLimit:
+
+  tls:
+    ## @param tls.enabled Enable TLS traffic support
+    enabled:
+
+  primary:
+    ## @param primary.standby.enabled Whether to enable current cluster's primary as standby server of another cluster or not
+    standby:
+      enabled:
+
+    ## @param primary.livenessProbe.enabled Enable livenessProbe on PostgreSQL Primary containers
+    livenessProbe:
+      enabled:
+
+    ## @param primary.readinessProbe.enabled Enable readinessProbe on PostgreSQL Primary containers
+    readinessProbe:
+      enabled:
+
+    ## @param primary.startupProbe.enabled Enable startupProbe on PostgreSQL Primary containers
+    startupProbe:
+      enabled:
+
+    ## @param primary.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
+    ## Example:
+    ## resources:
+    ##   requests:
+    ##     cpu: 2
+    ##     memory: 512Mi
+    ##   limits:
+    ##     cpu: 3
+    ##     memory: 1024Mi
+    resources:
+      requests:
+        cpu:
+        memory:
+      limits:
+        cpu:
+        memory:
+
+    ## @param primary.podSecurityContext.enabled Enable security context
+    podSecurityContext:
+      enabled:
+
+    ## @param primary.containerSecurityContext.enabled Enabled containers' Security Context
+    containerSecurityContext:
+      enabled:
+
+    ## @param primary.automountServiceAccountToken Mount Service Account token in pod
+    automountServiceAccountToken:
+
+    ## @param primary.hostNetwork Specify if host network should be enabled for PostgreSQL pod (postgresql primary)
+    hostNetwork:
+
+    ## @param primary.hostIPC Specify if host IPC should be enabled for PostgreSQL pod (postgresql primary)
+    hostIPC:
+
+    networkPolicy:
+      ## @param primary.networkPolicy.enabled Specifies whether a NetworkPolicy should be created
+      enabled:
+
+    persistence:
+      ## @param primary.persistence.enabled Enable PostgreSQL Primary data persistence using PVC
+      enabled:
+
+    persistentVolumeClaimRetentionPolicy:
+      ## @param primary.persistentVolumeClaimRetentionPolicy.enabled Enable Persistent volume retention policy for Primary Statefulset
+      enabled:
+
+  backup:
+    ## @param backup.enabled Enable the logical dump of the database "regularly"
+    enabled:
+
+  volumePermissions:
+    ## @param volumePermissions.enabled Enable init container that changes the owner and group of the persistent volume
+    enabled:
+
+  ## @param serviceBindings.enabled Create secret for service binding (Experimental)
+  serviceBindings:
+    enabled:
+
+  serviceAccount:
+    ## @param serviceAccount.create Enable creation of ServiceAccount for PostgreSQL pod
+    create:
+
+  ## @param rbac.create Create Role and RoleBinding (required for PSP to work)
+  rbac:
+    create:
+
+  ## @param psp.create Whether to create a PodSecurityPolicy. WARNING: PodSecurityPolicy is deprecated in Kubernetes v1.21 or later, unavailable in v1.25 or later
+  psp:
+    create:
+
+  metrics:
+    ## @param metrics.enabled Start a prometheus exporter
+    enabled:
