@@ -2,13 +2,10 @@
 
 [![license](https://img.shields.io/:license-Apache%202-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
----
 This repository contains `Helm Charts` orchestrated via `Helmfile` within a `Minikube` local cluster.
 There is implementation of the entire business logic written on `Python`, 
 enabling real-time transactions publishing via `Apache Kafka` and analyzing via `ClickHouse`. 
 The icing on the cake is `Apache Superset` as BI tool to visualize all the transactions and blockchain analytics.
-
----
 
 # Requirements
 
@@ -33,8 +30,6 @@ To run this project, make sure you have the following tools installed:
 
 
 - [**GnuPG**](https://blog.gitguardian.com/a-comprehensive-guide-to-sops/) (v2.2.27 or above): Open-source implementation of the OpenPGP standard for encrypting data.
-
----
 
 # Quickstart
 
@@ -71,8 +66,6 @@ kubectl get all --all-namespaces
 ```integrationperformancetest
 echo "$(minikube ip):32123"
 ```
-
----
 
 # Configuration
 
