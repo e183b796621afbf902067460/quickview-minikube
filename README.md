@@ -32,7 +32,7 @@ To run this project, make sure you have the following tools installed:
 - [**SOPs**](https://github.com/getsops/sops/releases/tag/v3.8.1) (v3.8.1 or above): Simple and lightweight tool for secrets operations that encrypts with PGP keys.
 
 
-- [**GnuPG**](https://blog.gitguardian.com/a-comprehensive-guide-to-sops/) (v2.2.27 or above): Open-source implementation of the OpenPGP standard for encrypting and signing data.
+- [**GnuPG**](https://blog.gitguardian.com/a-comprehensive-guide-to-sops/) (v2.2.27 or above): Open-source implementation of the OpenPGP standard for encrypting data.
 
 ---
 
