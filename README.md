@@ -36,13 +36,13 @@ To run this project, make sure you have the following tools installed:
 To deploy project with default values and standard configuration, follow these steps:
 
 - Clone current repository and change working directory:
-```integrationperformancetest
+```bash
 git clone https://github.com/e183b796621afbf902067460/quickview-minikube.git && cd quickview-minikube/
 ```
 
 - Deploy without having to do a bunch of setup, 
 so use the `/etc/.pgp.asc` file and import existed PGP keys:
-```integrationperformancetest
+```bash
 gpg --import etc/.pgp.asc
 ```
 
@@ -53,17 +53,17 @@ creation_rules:
 ```
 
 - Deploy project using `make` utility with **default** cluster configuration:
-```integrationperformancetest
+```bash
 make deploy
 ```
 
 - After all the steps done, just wait until all containers will be in `Running` state:
-```integrationperformancetest
+```bash
 kubectl get all --all-namespaces
 ```
 
 - When all containers in `Running` state, paste output of this command in browser:
-```integrationperformancetest
+```bash
 echo "$(minikube ip):32123"
 ```
 
@@ -73,12 +73,12 @@ Another configuration can be provided depends on your system,
 so to change parameters follow these steps:
 
 - Create PGP keys for secrets encryption:
-```integrationperformancetest
+```bash
 gpg --full-generate-key
 ```
 
 - List existed PGP keys and copy created one from previous step:
-```integrationperformancetest
+```bash
 gpg --list-keys
 ```
 
@@ -96,17 +96,17 @@ provide specific configuration for each container through `/master.d` and adjust
 ---
 
 - Encrypt provided secrets using `sops` utility, example for `quickview` container:
-```integrationperformancetest
+```bash
 sops --config etc/.sops.yaml --encrypt etc/quickview/master.d/secrets.raw.yaml > etc/quickview/master.d/secrets.yaml && rm -rf etc/quickview/master.d/secrets.raw.yaml
 ```
 
 - Set `QUICKVIEW_ENVIRONMENT` environment variable to deploy with new configuration provided in `/master.d` directories:
-```integrationperformancetest
+```bash
 export QUICKVIEW_ENVIRONMENT=master 
 ```
 
 - Deploy project using `make` utility with **master** cluster configuration:
-```integrationperformancetest
+```bash
 make deploy -e
 ```
 
