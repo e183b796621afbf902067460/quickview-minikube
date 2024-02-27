@@ -1,3 +1,0 @@
-execution:
-  config:
-    broker: 'pyamqp://rabbitmq:rabbitmq@0.0.0.0:5672/dagster'
