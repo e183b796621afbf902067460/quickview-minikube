@@ -1,0 +1,5 @@
+helmfiles:
+- path: kafka/helmfile.yaml
+- path: quickview/helmfile.yaml
+- path: clickhouse/helmfile.yaml
+- path: superset/helmfile.yaml

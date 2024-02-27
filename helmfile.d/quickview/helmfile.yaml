@@ -1,0 +1,16 @@
+bases:
+- ../../environments.yaml
+
+helmDefaults:
+  cleanupOnFail: true
+
+releases:
+  - name: quickview
+
+    namespace: quickview
+    createNamespace: true
+
+    chart: conf.d/
+
+    values:
+    - conf.d/values.yaml.gotmpl

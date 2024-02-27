@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: {{ include "quickview.fullname" . }}
+  labels:
+    {{- include "quickview.labels" . | nindent 4 }}
+
+spec:
+  replicas: {{ .Values.replicas }}
+
+  selector:
+    matchLabels:
+      {{- include "quickview.labels" . | nindent 6 }}
+
+  template:
+    metadata:
+      labels:
+        {{- include "quickview.labels" . | nindent 8 }}
+
+    spec:
+      containers:
+      - name: {{ include "quickview.fullname" . }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+        command: ["python3", "app/__main__.py"]
+
+        env:
+        - name: WSS_NODE_PROVIDER
+          valueFrom:
+            secretKeyRef:
+              key: wss_node_provider
+              name: {{ include "quickview.fullname" . }}
+        - name: BOOTSTRAP_SERVERS
+          value: {{ .Values.integrations.kafka.bootstrapServers }}
+        - name: TOPIC_NAME
+          value: {{ .Values.integrations.kafka.topicName }}

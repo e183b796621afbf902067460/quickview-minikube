@@ -1,0 +1,35 @@
+bases:
+- ../../environments.yaml
+
+repositories:
+  - name: bitnami
+    url: registry-1.docker.io/bitnamicharts
+    oci: true
+
+helmDefaults:
+  cleanupOnFail: true
+
+releases:
+  - name: clickhouse-configmap
+
+    namespace: clickhouse
+    createNamespace: true
+
+    chart: conf.d/
+
+    values:
+    - conf.d/values.yaml.gotmpl
+
+  - name: clickhouse
+
+    namespace: clickhouse
+    createNamespace: true
+
+    chart: bitnami/clickhouse
+    version: 5.2.2
+
+    needs:
+    - clickhouse-configmap
+
+    values:
+    - conf.d/values.yaml.gotmpl

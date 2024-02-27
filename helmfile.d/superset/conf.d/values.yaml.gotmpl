@@ -1,0 +1,39 @@
+image:
+  repository: {{ .Values | get "superset.image.repository" }}
+  tag: {{ .Values | get "superset.image.tag" }}
+  pullPolicy: {{ .Values | get "superset.image.pullPolicy" }}
+
+replicas: {{ .Values | get "superset.replicas" }}
+secretKey: {{ .Values | get "superset.secretKey" }}
+
+metadata:
+  namespace: {{ .Values | get "superset.metadata.namespace" }}
+
+auth:
+  username: {{ .Values | get "superset.auth.username" }}
+  password: {{ .Values | get "superset.auth.password" }}
+  firstname: {{ .Values | get "superset.auth.firstname" }}
+  lastname: {{ .Values | get "superset.auth.lastname" }}
+  email: {{ .Values | get "superset.auth.email" }}
+
+service:
+  type: {{ .Values | get "superset.service.type" }}
+  host: {{ .Values | get "superset.service.host" }}
+  port: {{ .Values | get "superset.service.port" }}
+  targetPort: {{ .Values | get "superset.service.targetPort" }}
+  nodePort: {{ .Values | get "superset.service.nodePort" }}
+
+integrations:
+
+  redis:
+    host: {{ .Values | get "superset.integrations.redis.host" }}
+    port: {{ .Values | get "superset.integrations.redis.port" }}
+    db: {{ .Values | get "superset.integrations.redis.db" }}
+    url: {{ .Values | get "superset.integrations.redis.url" }}
+
+  postgresql:
+    sqlalchemyDatabaseUri: {{ .Values | get "superset.integrations.postgresql.sqlalchemyDatabaseUri" }}
+
+  clickhouse:
+    password: {{ .Values | get "superset.integrations.clickhouse.password" }}
+    externalName: {{ .Values | get "superset.integrations.clickhouse.externalName" }}

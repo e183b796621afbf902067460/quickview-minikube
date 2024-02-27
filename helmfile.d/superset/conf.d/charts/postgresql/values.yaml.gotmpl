@@ -1,0 +1,163 @@
+diagnosticMode:
+  ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
+  enabled: {{ .Values | get "postgresql.diagnosticMode.enabled" }}
+
+## @param image.registry [default: REGISTRY_NAME] PostgreSQL image registry
+## @param image.repository [default: REPOSITORY_NAME/postgresql] PostgreSQL image repository
+## @skip image.tag PostgreSQL image tag (immutable tags are recommended)
+## @param image.pullPolicy PostgreSQL image pull policy
+image:
+  registry: {{ .Values | get "postgresql.image.registry" }}
+  repository: {{ .Values | get "postgresql.image.repository" }}
+  tag: {{ .Values | get "postgresql.image.tag" }}
+
+  ## Specify a imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
+  pullPolicy: {{ .Values | get "postgresql.image.pullPolicy" }}
+
+auth:
+  ## @param auth.enablePostgresUser Assign a password to the "postgres" admin user. Otherwise, remote access will be blocked for this user
+  enablePostgresUser: {{ .Values | get "postgresql.auth.enablePostgresUser" }}
+
+  ## @param auth.postgresPassword Password for the "postgres" admin user. Ignored if `auth.existingSecret` is provided
+  postgresPassword: {{ .Values | get "postgresql.auth.postgresPassword" }}
+
+  ## @param auth.username Name for a custom user to create
+  username: {{ .Values | get "postgresql.auth.username" }}
+
+  ## @param auth.password Password for the custom user to create. Ignored if `auth.existingSecret` is provided
+  password: {{ .Values | get "postgresql.auth.password" }}
+
+  ## @param auth.database Name for a custom database to create
+  database: {{ .Values | get "postgresql.auth.database" }}
+
+## @param architecture PostgreSQL architecture (`standalone` or `replication`)
+architecture: {{ .Values | get "postgresql.architecture" }}
+
+## @param containerPorts.postgresql PostgreSQL container port
+containerPorts:
+  postgresql: {{ .Values | get "postgresql.containerPorts.postgresql" }}
+
+## @param audit.logHostname Log client hostnames
+## @param audit.logConnections Add client log-in operations to the log file
+## @param audit.logDisconnections Add client log-outs operations to the log file
+audit:
+  logHostname: {{ .Values | get "postgresql.audit.logHostname" }}
+  logConnections: {{ .Values | get "postgresql.audit.logConnections" }}
+  logDisconnections: {{ .Values | get "postgresql.audit.logDisconnections" }}
+
+## @param ldap.enabled Enable LDAP support
+## @param ldap.tls.enabled Se to true to enable TLS encryption
+ldap:
+  enabled: {{ .Values | get "postgresql.ldap.enabled" }}
+  tls:
+    enabled: {{ .Values | get "postgresql.ldap.tls.enabled" }}
+
+## @param postgresqlDataDir PostgreSQL data dir folder
+postgresqlDataDir: {{ .Values | get "postgresql.postgresqlDataDir" }}
+
+shmVolume:
+  ## @param shmVolume.enabled Enable emptyDir volume for /dev/shm for PostgreSQL pod(s)
+  enabled: {{ .Values | get "postgresql.shmVolume.enabled" }}
+
+  ## @param shmVolume.sizeLimit Set this to enable a size limit on the shm tmpfs
+  ## Note: the size of the tmpfs counts against container's memory limit
+  ## e.g:
+  ## sizeLimit: 1Gi
+  sizeLimit: {{ .Values | get "postgresql.shmVolume.sizeLimit" }}
+
+tls:
+  ## @param tls.enabled Enable TLS traffic support
+  enabled: {{ .Values | get "postgresql.tls.enabled" }}
+
+primary:
+  ## @param primary.standby.enabled Whether to enable current cluster's primary as standby server of another cluster or not
+  standby:
+    enabled: {{ .Values | get "postgresql.primary.standby.enabled" }}
+
+  ## @param primary.livenessProbe.enabled Enable livenessProbe on PostgreSQL Primary containers
+  livenessProbe:
+    enabled: {{ .Values | get "postgresql.primary.livenessProbe.enabled" }}
+
+  ## @param primary.readinessProbe.enabled Enable readinessProbe on PostgreSQL Primary containers
+  readinessProbe:
+    enabled: {{ .Values | get "postgresql.primary.readinessProbe.enabled" }}
+
+  ## @param primary.startupProbe.enabled Enable startupProbe on PostgreSQL Primary containers
+  startupProbe:
+    enabled: {{ .Values | get "postgresql.primary.startupProbe.enabled" }}
+
+  ## @param primary.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
+  ## Example:
+  ## resources:
+  ##   requests:
+  ##     cpu: 2
+  ##     memory: 512Mi
+  ##   limits:
+  ##     cpu: 3
+  ##     memory: 1024Mi
+  resources:
+    requests:
+      cpu: {{ .Values | get "postgresql.primary.resources.requests.cpu" }}
+      memory: {{ .Values | get "postgresql.primary.resources.requests.memory" }}
+    limits:
+      cpu: {{ .Values | get "postgresql.primary.resources.limits.cpu" }}
+      memory: {{ .Values | get "postgresql.primary.resources.limits.memory" }}
+
+  ## @param primary.podSecurityContext.enabled Enable security context
+  podSecurityContext:
+    enabled: {{ .Values | get "postgresql.primary.podSecurityContext.enabled" }}
+
+  ## @param primary.containerSecurityContext.enabled Enabled containers' Security Context
+  containerSecurityContext:
+    enabled: {{ .Values | get "postgresql.primary.containerSecurityContext.enabled" }}
+
+  ## @param primary.automountServiceAccountToken Mount Service Account token in pod
+  automountServiceAccountToken: {{ .Values | get "postgresql.primary.automountServiceAccountToken" }}
+
+  ## @param primary.hostNetwork Specify if host network should be enabled for PostgreSQL pod (postgresql primary)
+  hostNetwork: {{ .Values | get "postgresql.primary.hostNetwork" }}
+
+  ## @param primary.hostIPC Specify if host IPC should be enabled for PostgreSQL pod (postgresql primary)
+  hostIPC: {{ .Values | get "postgresql.primary.hostIPC" }}
+
+  networkPolicy:
+    ## @param primary.networkPolicy.enabled Specifies whether a NetworkPolicy should be created
+    enabled: {{ .Values | get "postgresql.primary.networkPolicy.enabled" }}
+
+  persistence:
+    ## @param primary.persistence.enabled Enable PostgreSQL Primary data persistence using PVC
+    enabled: {{ .Values | get "postgresql.primary.persistence.enabled" }}
+
+  persistentVolumeClaimRetentionPolicy:
+    ## @param primary.persistentVolumeClaimRetentionPolicy.enabled Enable Persistent volume retention policy for Primary Statefulset
+    enabled: {{ .Values | get "postgresql.primary.persistentVolumeClaimRetentionPolicy.enabled" }}
+
+backup:
+  ## @param backup.enabled Enable the logical dump of the database "regularly"
+  enabled: {{ .Values | get "postgresql.backup.enabled" }}
+
+volumePermissions:
+  ## @param volumePermissions.enabled Enable init container that changes the owner and group of the persistent volume
+  enabled: {{ .Values | get "postgresql.volumePermissions.enabled" }}
+
+## @param serviceBindings.enabled Create secret for service binding (Experimental)
+serviceBindings:
+  enabled: {{ .Values | get "postgresql.serviceBindings.enabled" }}
+
+serviceAccount:
+  ## @param serviceAccount.create Enable creation of ServiceAccount for PostgreSQL pod
+  create: {{ .Values | get "postgresql.serviceAccount.create" }}
+
+## @param rbac.create Create Role and RoleBinding (required for PSP to work)
+rbac:
+  create: {{ .Values | get "postgresql.rbac.create" }}
+
+## @param psp.create Whether to create a PodSecurityPolicy. WARNING: PodSecurityPolicy is deprecated in Kubernetes v1.21 or later, unavailable in v1.25 or later
+psp:
+  create: {{ .Values | get "postgresql.psp.create" }}
+
+metrics:
+  ## @param metrics.enabled Start a prometheus exporter
+  enabled: {{ .Values | get "postgresql.metrics.enabled" }}

@@ -1,0 +1,199 @@
+## @param serviceBindings.enabled Create secret for service binding (Experimental)
+## Ref: https://servicebinding.io/service-provider/
+serviceBindings:
+  enabled: {{ .Values | get "kafka.serviceBindings.enabled" }}
+
+diagnosticMode:
+  ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
+  enabled: {{ .Values | get "kafka.diagnosticMode.enabled" }}
+
+## @param image.registry [default: REGISTRY_NAME] Kafka image registry
+## @param image.repository [default: REPOSITORY_NAME/kafka] Kafka image repository
+## @skip image.tag Kafka image tag (immutable tags are recommended)
+## @param image.pullPolicy Kafka image pull policy
+image:
+  registry: {{ .Values | get "kafka.image.registry" }}
+  repository: {{ .Values | get "kafka.image.repository" }}
+  tag: {{ .Values | get "kafka.image.tag" }}
+
+  ## Specify a imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
+  pullPolicy: {{ .Values | get "kafka.image.pullPolicy" }}
+
+listeners:
+  ## @param listeners.client.name Name for the Kafka client listener
+  ## @param listeners.client.containerPort Port for the Kafka client listener
+  ## @param listeners.client.protocol Security protocol for the Kafka client listener. Allowed values are 'PLAINTEXT', 'SASL_PLAINTEXT', 'SASL_SSL' and 'SSL'
+  client:
+    containerPort: {{ .Values | get "kafka.listeners.client.containerPort" }}
+    protocol: {{ .Values | get "kafka.listeners.client.protocol" }}
+    name: {{ .Values | get "kafka.listeners.client.name" }}
+
+  ## @param listeners.controller.name Name for the Kafka controller listener
+  ## @param listeners.controller.containerPort Port for the Kafka controller listener
+  ## @param listeners.controller.protocol Security protocol for the Kafka controller listener. Allowed values are 'PLAINTEXT', 'SASL_PLAINTEXT', 'SASL_SSL' and 'SSL'
+  controller:
+    name: {{ .Values | get "kafka.listeners.controller.name" }}
+    containerPort: {{ .Values | get "kafka.listeners.controller.containerPort" }}
+    protocol: {{ .Values | get "kafka.listeners.controller.protocol" }}
+
+  ## @param listeners.interbroker.name Name for the Kafka inter-broker listener
+  ## @param listeners.interbroker.containerPort Port for the Kafka inter-broker listener
+  ## @param listeners.interbroker.protocol Security protocol for the Kafka inter-broker listener. Allowed values are 'PLAINTEXT', 'SASL_PLAINTEXT', 'SASL_SSL' and 'SSL'
+  interbroker:
+    containerPort: {{ .Values | get "kafka.listeners.interbroker.containerPort" }}
+    protocol: {{ .Values | get "kafka.listeners.interbroker.protocol" }}
+    name: {{ .Values | get "kafka.listeners.interbroker.name" }}
+
+  ## @param listeners.external.containerPort Port for the Kafka external listener
+  ## @param listeners.external.protocol Security protocol for the Kafka external listener. . Allowed values are 'PLAINTEXT', 'SASL_PLAINTEXT', 'SASL_SSL' and 'SSL'
+  ## @param listeners.external.name Name for the Kafka external listener
+  external:
+    containerPort: {{ .Values | get "kafka.listeners.external.containerPort" }}
+    protocol: {{ .Values | get "kafka.listeners.external.protocol" }}
+    name: {{ .Values | get "kafka.listeners.external.name" }}
+
+controller:
+  ## @param controller.replicaCount Number of Kafka controller-eligible nodes
+  ## Ignore this section if running in Zookeeper mode.
+  replicaCount: {{ .Values | get "kafka.controller.replicaCount" }}
+
+  ## @param controller.controllerOnly If set to true, controller nodes will be deployed as dedicated controllers, instead of controller+broker processes.
+  controllerOnly: {{ .Values | get "kafka.controller.controllerOnly" }}
+
+  ## @param controller.livenessProbe.enabled Enable livenessProbe on Kafka containers
+  livenessProbe:
+    enabled: {{ .Values | get "kafka.controller.livenessProbe.enabled" }}
+
+  ## @param controller.readinessProbe.enabled Enable readinessProbe on Kafka containers
+  readinessProbe:
+    enabled: {{ .Values | get "kafka.controller.readinessProbe.enabled" }}
+
+  ## @param controller.startupProbe.enabled Enable startupProbe on Kafka containers
+  startupProbe:
+    enabled: {{ .Values | get "kafka.controller.startupProbe.enabled" }}
+
+  ## @param controller.resources.limits The resources limits for the container
+  ## @param controller.resources.requests The requested resources for the container
+  resources:
+    requests:
+      cpu: {{ .Values | get "kafka.controller.resources.requests.cpu" }}
+      memory: {{ .Values | get "kafka.controller.resources.requests.memory" }}
+    limits:
+      cpu: {{ .Values | get "kafka.controller.resources.limits.cpu" }}
+      memory: {{ .Values | get "kafka.controller.resources.limits.memory" }}
+
+  ## @param controller.podSecurityContext.enabled Enable security context for the pods
+  podSecurityContext:
+    enabled: {{ .Values | get "kafka.controller.podSecurityContext.enabled" }}
+
+  ## @param controller.containerSecurityContext.enabled Enable Kafka containers' Security Context
+  containerSecurityContext:
+    enabled: {{ .Values | get "kafka.controller.containerSecurityContext.enabled" }}
+
+  ## @param controller.automountServiceAccountToken Mount Service Account token in pod
+  automountServiceAccountToken: {{ .Values | get "kafka.controller.automountServiceAccountToken" }}
+
+  ## @param controller.hostNetwork Specify if host network should be enabled for Kafka pods
+  hostNetwork: {{ .Values | get "kafka.controller.hostNetwork" }}
+
+  ## @param controller.hostIPC Specify if host IPC should be enabled for Kafka pods
+  hostIPC: {{ .Values | get "kafka.controller.hostIPC" }}
+
+  ## @param controller.enableServiceLinks Whether information about services should be injected into pod's environment variable
+  ## The environment variables injected by service links are not used, but can lead to slow kafka boot times or slow running of the scripts when there are many services in the current namespace.
+  ## If you experience slow pod startups or slow running of the scripts you probably want to set this to `false`.
+  enableServiceLinks: {{ .Values | get "kafka.controller.enableServiceLinks" }}
+
+  ## Enable persistence using Persistent Volume Claims
+  ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+  persistence:
+    ## @param controller.persistence.enabled Enable Kafka data persistence using PVC, note that ZooKeeper persistence is unaffected
+    enabled: {{ .Values | get "kafka.controller.persistence.enabled" }}
+
+  ## Log Persistence parameters
+  logPersistence:
+    ## @param controller.logPersistence.enabled Enable Kafka logs persistence using PVC, note that ZooKeeper persistence is unaffected
+    enabled: {{ .Values | get "kafka.controller.logPersistence.enabled" }}
+
+service:
+  ## @param service.type Kubernetes Service type
+  type: {{ .Values | get "kafka.service.type" }}
+
+  ## @param service.ports.client Kafka svc port for client connections
+  ## @param service.ports.controller Kafka svc port for controller connections. It is used if "kraft.enabled: true"
+  ## @param service.ports.interbroker Kafka svc port for inter-broker connections
+  ## @param service.ports.external Kafka svc port for external connections
+  ports:
+    client: {{ .Values | get "kafka.service.ports.client" }}
+    controller: {{ .Values | get "kafka.service.ports.controller" }}
+    interbroker: {{ .Values | get "kafka.service.ports.interbroker" }}
+    external: {{ .Values | get "kafka.service.ports.external" }}
+
+  ## @param service.allocateLoadBalancerNodePorts Whether to allocate node ports when service type is LoadBalancer
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#load-balancer-nodeport-allocation
+  allocateLoadBalancerNodePorts: {{ .Values | get "kafka.service.allocateLoadBalancerNodePorts" }}
+
+  ## @param service.externalTrafficPolicy Kafka service external traffic policy
+  ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
+  externalTrafficPolicy: {{ .Values | get "kafka.service.externalTrafficPolicy" }}
+
+externalAccess:
+  ## @param externalAccess.enabled Enable Kubernetes external cluster access to Kafka brokers
+  enabled: {{ .Values | get "kafka.externalAccess.enabled" }}
+
+volumePermissions:
+  ## @param volumePermissions.enabled Enable init container that changes the owner and group of the persistent volume
+  enabled: {{ .Values | get "kafka.volumePermissions.enabled" }}
+
+serviceAccount:
+  ## @param serviceAccount.create Enable creation of ServiceAccount for Kafka pods
+  create: {{ .Values | get "kafka.serviceAccount.create" }}
+
+  ## @param serviceAccount.automountServiceAccountToken Allows auto mount of ServiceAccountToken on the serviceAccount created
+  ## Can be set to false if pods using this serviceAccount do not need to use K8s API
+  automountServiceAccountToken: {{ .Values | get "kafka.serviceAccount.automountServiceAccountToken" }}
+
+rbac:
+  ## @param rbac.create Whether to create & use RBAC resources or not
+  ## binding Kafka ServiceAccount to a role
+  ## that allows Kafka pods querying the K8s API
+  create: {{ .Values | get "kafka.rbac.create" }}
+
+kraft:
+  ## @param kraft.enabled Switch to enable or disable the KRaft mode for Kafka
+  enabled: {{ .Values | get "kafka.kraft.enabled" }}
+
+provisioning:
+  ## @param provisioning.enabled Enable kafka provisioning Job
+  enabled: {{ .Values | get "kafka.provisioning.enabled" }}
+
+  ## @param provisioning.numPartitions Default number of partitions for topics when unspecified
+  numPartitions: {{ .Values | get "kafka.provisioning.numPartitions" }}
+
+  ## @param provisioning.replicationFactor Default replication factor for topics when unspecified
+  replicationFactor: {{ .Values | get "kafka.provisioning.replicationFactor" }}
+
+  ## @param provisioning.topics Kafka topics to provision
+  topics:
+    - name: {{ .Values | get "kafka.provisioning.topics.topic.name" }}
+      config:
+        min.insync.replicas: {{ .Values | get "kafka.provisioning.topics.topic.config.replicas.insync" }}
+        unclean.leader.election.enable: {{ .Values | get "kafka.provisioning.topics.topic.config.leader.unclean" }}
+
+  serviceAccount:
+    ## @param provisioning.serviceAccount.create Enable creation of ServiceAccount for Kafka provisioning pods
+    create: {{ .Values | get "kafka.provisioning.serviceAccount.create" }}
+
+  podSecurityContext:
+    ## @param provisioning.podSecurityContext.enabled Enable security context for the pods
+    enabled: {{ .Values | get "kafka.provisioning.podSecurityContext.enabled" }}
+
+  containerSecurityContext:
+  ## @param provisioning.containerSecurityContext.enabled Enable Kafka provisioning containers' Security Context
+    enabled: {{ .Values | get "kafka.provisioning.containerSecurityContext.enabled" }}
+
+zookeeper:
+  ## @param zookeeper.enabled Switch to enable or disable the ZooKeeper helm chart. Must be false if you use KRaft mode.
+  enabled: {{ .Values | get "kafka.zookeeper.enabled" }}

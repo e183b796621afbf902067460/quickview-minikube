@@ -1,0 +1,84 @@
+## @param image.registry [default: REGISTRY_NAME] ClickHouse image registry
+## @param image.repository [default: REPOSITORY_NAME/clickhouse] ClickHouse image repository
+## @skip image.tag ClickHouse image tag (immutable tags are recommended)
+## @param image.pullPolicy ClickHouse image pull policy
+image:
+  registry: {{ .Values | get "clickhouse.image.registry" }}
+  repository: {{ .Values | get "clickhouse.image.repository" }}
+  tag: {{ .Values | get "clickhouse.image.tag" }}
+
+  ## Specify a imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: http://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
+  pullPolicy: {{ .Values | get "clickhouse.image.pullPolicy" }}
+
+## @param shards Number of ClickHouse shards to deploy
+shards: {{ .Values | get "clickhouse.shards" }}
+
+## @param replicaCount Number of ClickHouse replicas per shard to deploy if keeper enable, same as keeper count, keeper cluster by shards.
+replicaCount: {{ .Values | get "clickhouse.replicaCount" }}
+
+## @param auth.username ClickHouse Admin username
+## @param auth.password ClickHouse Admin password
+## @param auth.database ClickHouse database
+auth:
+  username: {{ .Values | get "clickhouse.auth.username" }}
+  password: {{ .Values | get "clickhouse.auth.password" }}
+  database: {{ .Values | get "clickhouse.auth.database" }}
+
+## @param livenessProbe.enabled Enable livenessProbe on ClickHouse containers
+livenessProbe:
+  enabled: {{ .Values | get "clickhouse.livenessProbe.enabled" }}
+
+## @param readinessProbe.enabled Enable readinessProbe on ClickHouse containers
+readinessProbe:
+  enabled: {{ .Values | get "clickhouse.readinessProbe.enabled" }}
+
+## @param podSecurityContext.enabled Enabled ClickHouse pods' Security Context
+podSecurityContext:
+  enabled: {{ .Values | get "clickhouse.podSecurityContext.enabled" }}
+
+## @param containerSecurityContext.enabled Enable containers' Security Context
+containerSecurityContext:
+  enabled: {{ .Values | get "clickhouse.containerSecurityContext.enabled" }}
+
+## @param persistence.enabled Enable persistence using Persistent Volume Claims
+persistence:
+  enabled: {{ .Values | get "clickhouse.persistence.enabled" }}
+
+## @param serviceAccount.create Specifies whether a ServiceAccount should be created
+serviceAccount:
+  create: {{ .Values | get "clickhouse.serviceAccount.create" }}
+
+## @param zookeeper.enabled Deploy Zookeeper subchart
+zookeeper:
+  enabled: {{ .Values | get "clickhouse.zookeeper.enabled" }}
+
+## @param networkPolicy.enabled Specifies whether a NetworkPolicy should be created
+networkPolicy:
+  enabled: {{ .Values | get "clickhouse.networkPolicy.enabled" }}
+
+## @param extraOverridesConfigmap The name of an existing ConfigMap with extra configuration for ClickHouse
+extraOverridesConfigmap: {{ .Values | get "clickhouse.extraOverridesConfigmap" }}
+
+## @param startdbScripts Dictionary of startdb scripts
+startdbScripts:
+  docker-entrypoint-initdb.sh: {{ .Values | get "clickhouse.startdbScripts.script" }}
+
+## @param extraVolumes Optionally specify extra list of additional volumes for the ClickHouse pod(s)
+extraVolumes:
+  - name: {{ .Values | get "clickhouse.extraVolumes.clickhouse.name" }}
+    configMap:
+      name: {{ .Values | get "clickhouse.extraVolumes.clickhouse.configMap.name" }}
+
+## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts for the ClickHouse container(s)
+extraVolumeMounts:
+  - name: {{ .Values | get "clickhouse.extraVolumeMounts.clickhouse.name" }}
+    mountPath: {{ .Values | get "clickhouse.extraVolumeMounts.clickhouse.mountPath" }}
+    readOnly: {{ .Values | get "clickhouse.extraVolumeMounts.clickhouse.readOnly" }}
+
+integrations:
+  kafka:
+    brokerList: {{ .Values | get "clickhouse.integrations.kafka.brokerList" }}
+    topicList: {{ .Values | get "clickhouse.integrations.kafka.topicList" }}
+    groupName: {{ .Values | get "clickhouse.integrations.kafka.groupName" }}

@@ -1,0 +1,12 @@
+image:
+  repository: {{ .Values | get "quickview.image.repository" }}
+  tag: {{ .Values | get "quickview.image.tag" }}
+  pullPolicy: {{ .Values | get "quickview.image.pullPolicy" }}
+
+replicas: {{ .Values | get "quickview.replicas" }}
+wssNodeProvider: {{ .Values | get "quickview.wssNodeProvider" }}
+
+integrations:
+  kafka:
+    bootstrapServers: {{ .Values | get "quickview.integrations.kafka.bootstrapServers" }}
+    topicName: {{ .Values | get "quickview.integrations.kafka.topicName" }}

@@ -1,0 +1,152 @@
+## @param useHostnames Use hostnames internally when announcing replication. If false, the hostname will be resolved to an IP address
+useHostnames: {{ .Values | get "redis.useHostnames" }}
+
+## @param nameResolutionThreshold Failure threshold for internal hostnames resolution
+nameResolutionThreshold: {{ .Values | get "redis.nameResolutionThreshold" }}
+
+## @param nameResolutionTimeout Timeout seconds between probes for internal hostnames resolution
+nameResolutionTimeout: {{ .Values | get "redis.nameResolutionTimeout" }}
+
+diagnosticMode:
+  ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
+  enabled: {{ .Values | get "redis.diagnosticMode.enabled" }}
+
+## @param image.registry [default: REGISTRY_NAME] Redis&reg; image registry
+## @param image.repository [default: REPOSITORY_NAME/redis] Redis&reg; image repository
+## @skip image.tag Redis&reg; image tag (immutable tags are recommended)
+## @param image.pullPolicy Redis&reg; image pull policy
+image:
+  registry: {{ .Values | get "redis.image.registry" }}
+  repository: {{ .Values | get "redis.image.repository" }}
+  tag: {{ .Values | get "redis.image.tag" }}
+
+  ## Specify a imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
+  pullPolicy: {{ .Values | get "redis.image.pullPolicy" }}
+
+## @param architecture Redis&reg; architecture. Allowed values: `standalone` or `replication`
+architecture: {{ .Values | get "redis.architecture" }}
+
+auth:
+  ## @param auth.enabled Enable password authentication
+  enabled: {{ .Values | get "redis.auth.enabled" }}
+
+master:
+  ## @param master.count Number of Redis&reg; master instances to deploy (experimental, requires additional configuration)
+  count: {{ .Values | get "redis.master.count" }}
+
+  ## @param master.containerPorts.redis Container port to open on Redis&reg; master nodes
+  containerPorts:
+    redis: {{ .Values | get "redis.master.containerPorts.redis" }}
+
+  ## @param master.startupProbe.enabled Enable startupProbe on Redis&reg; master nodes
+  startupProbe:
+    enabled: {{ .Values | get "redis.master.startupProbe.enabled" }}
+
+  ## @param master.livenessProbe.enabled Enable livenessProbe on Redis&reg; master nodes
+  livenessProbe:
+    enabled: {{ .Values | get "redis.master.livenessProbe.enabled" }}
+
+  ## @param master.readinessProbe.enabled Enable readinessProbe on Redis&reg; master nodes
+  readinessProbe:
+    enabled: {{ .Values | get "redis.master.readinessProbe.enabled" }}
+
+  ## @param master.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
+  ## Example:
+  ## resources:
+  ##   requests:
+  ##     cpu: 2
+  ##     memory: 512Mi
+  ##   limits:
+  ##     cpu: 3
+  ##     memory: 1024Mi
+  resources:
+    requests:
+      cpu: {{ .Values | get "redis.master.resources.requests.cpu" }}
+      memory: {{ .Values | get "redis.master.resources.requests.memory" }}
+    limits:
+      cpu: {{ .Values | get "redis.master.resources.limits.cpu" }}
+      memory: {{ .Values | get "redis.master.resources.limits.memory" }}
+
+  ## @param master.podSecurityContext.enabled Enabled Redis&reg; master pods' Security Context
+  podSecurityContext:
+    enabled: {{ .Values | get "redis.master.podSecurityContext.enabled" }}
+
+  ## @param master.containerSecurityContext.enabled Enabled Redis&reg; master containers' Security Context
+  containerSecurityContext:
+    enabled: {{ .Values | get "redis.master.containerSecurityContext.enabled" }}
+
+  ## @param master.automountServiceAccountToken Mount Service Account token in pod
+  automountServiceAccountToken: {{ .Values | get "redis.master.automountServiceAccountToken" }}
+
+  persistence:
+    ## @param master.persistence.enabled Enable persistence on Redis&reg; master nodes using Persistent Volume Claims
+    enabled: {{ .Values | get "redis.master.persistence.enabled" }}
+
+  ## @param master.persistentVolumeClaimRetentionPolicy.enabled Controls if and how PVCs are deleted during the lifecycle of a StatefulSet
+  persistentVolumeClaimRetentionPolicy:
+    enabled: {{ .Values | get "redis.master.persistentVolumeClaimRetentionPolicy.enabled" }}
+
+  service:
+    ## @param master.service.type Redis&reg; master service type
+    type: {{ .Values | get "redis.master.service.type" }}
+
+    ## @param master.service.ports.redis Redis&reg; master service port
+    ports:
+      redis: {{ .Values | get "redis.master.service.ports.redis" }}
+
+  serviceAccount:
+    ## @param master.serviceAccount.create Specifies whether a ServiceAccount should be created
+    create: {{ .Values | get "redis.master.serviceAccount.create" }}
+
+sentinel:
+  ## @param sentinel.enabled Use Redis&reg; Sentinel on Redis&reg; pods.
+  enabled: {{ .Values | get "redis.sentinel.enabled" }}
+
+## @param serviceBindings.enabled Create secret for service binding (Experimental)
+serviceBindings:
+  enabled: {{ .Values | get "redis.serviceBindings.enabled" }}
+
+networkPolicy:
+  ## @param networkPolicy.enabled Enable creation of NetworkPolicy resources
+  enabled: {{ .Values | get "redis.networkPolicy.enabled" }}
+
+podSecurityPolicy:
+  ## @param podSecurityPolicy.create Whether to create a PodSecurityPolicy. WARNING: PodSecurityPolicy is deprecated in Kubernetes v1.21 or later, unavailable in v1.25 or later
+  create: {{ .Values | get "redis.podSecurityPolicy.create" }}
+
+  ## @param podSecurityPolicy.enabled Enable PodSecurityPolicy's RBAC rules
+  enabled: {{ .Values | get "redis.podSecurityPolicy.enabled" }}
+
+rbac:
+  ## @param rbac.create Specifies whether RBAC resources should be created
+  create: {{ .Values | get "redis.rbac.create" }}
+
+serviceAccount:
+  ## @param serviceAccount.create Specifies whether a ServiceAccount should be created
+  create: {{ .Values | get "redis.serviceAccount.create" }}
+
+pdb:
+  ## @param pdb.create Specifies whether a PodDisruptionBudget should be created
+  create: {{ .Values | get "redis.pdb.create" }}
+
+tls:
+  ## @param tls.enabled Enable TLS traffic
+  enabled: {{ .Values | get "redis.tls.enabled" }}
+
+metrics:
+  ## @param metrics.enabled Start a sidecar prometheus exporter to expose Redis&reg; metrics
+  enabled: {{ .Values | get "redis.metrics.enabled" }}
+
+volumePermissions:
+  ## @param volumePermissions.enabled Enable init container that changes the owner/group of the PV mount point to `runAsUser:fsGroup`
+  enabled: {{ .Values | get "redis.volumePermissions.enabled" }}
+
+sysctl:
+  ## @param sysctl.enabled Enable init container to modify Kernel settings
+  enabled: {{ .Values | get "redis.sysctl.enabled" }}
+
+## @param useExternalDNS.enabled Enable various syntax that would enable external-dns to work.  Note this requires a working installation of `external-dns` to be usable.
+useExternalDNS:
+  enabled: {{ .Values | get "redis.useExternalDNS.enabled" }}

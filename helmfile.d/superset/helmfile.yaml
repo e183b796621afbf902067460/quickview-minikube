@@ -1,0 +1,47 @@
+bases:
+- ../../environments.yaml
+
+repositories:
+  - name: bitnami
+    url: registry-1.docker.io/bitnamicharts
+    oci: true
+
+helmDefaults:
+  cleanupOnFail: true
+
+releases:
+  - name: postgresql
+
+    namespace: superset
+    createNamespace: true
+
+    chart: bitnami/postgresql
+    version: 14.2.2
+
+    values:
+      - conf.d/charts/postgresql/values.yaml.gotmpl
+
+  - name: redis
+
+    namespace: superset
+    createNamespace: true
+
+    chart: bitnami/redis
+    version: 18.16.1
+
+    values:
+      - conf.d/charts/redis/values.yaml.gotmpl
+
+  - name: superset
+
+    namespace: superset
+    createNamespace: true
+
+    chart: conf.d/
+
+    needs:
+    - postgresql
+    - redis
+
+    values:
+    - conf.d/values.yaml.gotmpl

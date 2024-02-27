@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: {{ include "superset.fullname" . }}
+  labels:
+    {{- include "superset.labels" . | nindent 4 }}
+
+spec:
+  type: {{ .Values.service.type }}
+
+  selector:
+    {{- include "superset.labels" . | nindent 4 }}
+
+  ports:
+    - name: {{ include "superset.fullname" . }}
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+      nodePort: {{ .Values.service.nodePort }}
+
+---
+
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: clickhouse
+  namespace: {{ .Values.metadata.namespace }}
+
+spec:
+  type: ExternalName
+  externalName: {{ .Values.integrations.clickhouse.externalName }}
+  ports:
+    - protocol: TCP
+      port: 8123
+      targetPort: 8123

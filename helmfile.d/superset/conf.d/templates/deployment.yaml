@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: {{ include "superset.fullname" . }}
+  labels:
+    {{- include "superset.labels" . | nindent 4 }}
+
+spec:
+  replicas: {{ .Values.replicas }}
+
+  selector:
+    matchLabels:
+      {{- include "superset.labels" . | nindent 6 }}
+
+  template:
+    metadata:
+      labels:
+        {{- include "superset.labels" . | nindent 8 }}
+
+    spec:
+      containers:
+      - name: {{ include "superset.fullname" . }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+        ports:
+          - name: {{ include "superset.fullname" . }}
+            containerPort: {{ .Values.service.port }}
+
+        env:
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: secret_key
+              name: {{ include "superset.fullname" . }}
+        - name: SQLALCHEMY_DATABASE_URI
+          valueFrom:
+            secretKeyRef:
+              key: sqlalchemy_database_uri
+              name: {{ include "superset.fullname" . }}
+        - name: CLICKHOUSE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: clickhouse_password
+              name: {{ include "superset.fullname" . }}
+
+        - name: CACHE_REDIS_HOST
+          value: "{{ .Values.integrations.redis.host }}"
+        - name: CACHE_REDIS_PORT
+          value: "{{ .Values.integrations.redis.port }}"
+        - name: CACHE_REDIS_DB
+          value: "{{ .Values.integrations.redis.db }}"
+        - name: CACHE_REDIS_URL
+          value: "{{ .Values.integrations.redis.url }}"
+
+        - name: SUPERSET_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: superset_username
+              name: {{ include "superset.fullname" . }}
+        - name: SUPERSET_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: superset_password
+              name: {{ include "superset.fullname" . }}
+        - name: SUPERSET_FIRSTNAME
+          value: "{{ .Values.auth.firstname }}"
+        - name: SUPERSET_LASTNAME
+          value: "{{ .Values.auth.lastname }}"
+        - name: SUPERSET_EMAIL
+          value: "{{ .Values.auth.email }}"
+        - name: SUPERSET_HOST
+          value: "{{ .Values.service.host }}"
+        - name: SUPERSET_PORT
+          value: "{{ .Values.service.port }}"
