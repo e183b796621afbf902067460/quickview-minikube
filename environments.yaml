@@ -1,0 +1,29 @@
+environments:
+
+  default:
+    values:
+    - ../../etc/kafka/default.d/values.yaml
+    - ../../etc/quickview/default.d/values.yaml
+    - ../../etc/clickhouse/default.d/values.yaml
+    - ../../etc/postgresql/default.d/values.yaml
+    - ../../etc/redis/default.d/values.yaml
+    - ../../etc/superset/default.d/values.yaml
+    secrets:
+    - ../../etc/quickview/default.d/secrets.yaml
+    - ../../etc/clickhouse/default.d/secrets.yaml
+    - ../../etc/postgresql/default.d/secrets.yaml
+    - ../../etc/superset/default.d/secrets.yaml
+
+  master:
+    values:
+    - ../../etc/kafka/master.d/values.yaml
+    - ../../etc/quickview/master.d/values.yaml
+    - ../../etc/clickhouse/master.d/values.yaml
+    - ../../etc/postgresql/master.d/values.yaml
+    - ../../etc/redis/master.d/values.yaml
+    - ../../etc/superset/master.d/values.yaml
+    secrets:
+    - ../../etc/quickview/master.d/secrets.yaml
+    - ../../etc/clickhouse/master.d/secrets.yaml
+    - ../../etc/postgresql/master.d/secrets.yaml
+    - ../../etc/superset/master.d/secrets.yaml
