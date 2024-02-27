@@ -11,25 +11,25 @@ The icing on the cake is `Apache Superset` as BI tool to visualize all the trans
 
 To run this project, make sure you have the following tools installed:
 
-- [**Docker**](https://docs.docker.com/engine/install/ubuntu/) (v25.0.3 or above): Containerization platform for building, shipping, and running applications.
+- [**Docker**](https://docs.docker.com/engine/install/ubuntu/)[^1] (v25.0.3 or above): Containerization platform for building, shipping, and running applications.
 
 
-- [**Kubectl**](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) (v1.29.1 or above): Command-line tool for interacting with Kubernetes clusters.
+- [**Kubectl**](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)[^2] (v1.29.1 or above): Command-line tool for interacting with Kubernetes clusters.
 
 
-- [**Minikube**](https://minikube.sigs.k8s.io/docs/start/) (v1.32.0 or above): Lightweight Kubernetes implementation for local development and testing.
+- [**Minikube**](https://minikube.sigs.k8s.io/docs/start/)[^3] (v1.32.0 or above): Lightweight Kubernetes implementation for local development and testing.
 
 
-- [**Helm**](https://helm.sh/docs/intro/install/) (v3.14.0 or above): Kubernetes package manager for managing applications and their dependencies.
+- [**Helm**](https://helm.sh/docs/intro/install/)[^4] (v3.14.0 or above): Kubernetes package manager for managing applications and their dependencies.
 
 
-- [**Helmfile**](https://medium.com/geekculture/helmfile-introduction-f63c42244dcc) (v0.162.0 or above): Declarative configuration for managing Helm releases.
+- [**Helmfile**](https://medium.com/geekculture/helmfile-introduction-f63c42244dcc)[^5] (v0.162.0 or above): Declarative configuration for managing Helm releases.
 
 
-- [**SOPs**](https://github.com/getsops/sops/releases/tag/v3.8.1) (v3.8.1 or above): Simple and lightweight tool for secrets operations that encrypts with PGP keys.
+- [**SOPs**](https://github.com/getsops/sops/releases/tag/v3.8.1)[^6] (v3.8.1 or above): Simple and lightweight tool for secrets operations that encrypts with PGP keys.
 
 
-- [**GnuPG**](https://blog.gitguardian.com/a-comprehensive-guide-to-sops/) (v2.2.27 or above): Open-source implementation of the OpenPGP standard for encrypting data.
+- [**GnuPG**](https://blog.gitguardian.com/a-comprehensive-guide-to-sops/)[^7] (v2.2.27 or above): Open-source implementation of the OpenPGP standard for encrypting data.
 
 # Quickstart
 
@@ -88,12 +88,9 @@ creation_rules:
   - pgp: FBC7B9E2A4F9289AC0C1D4843D16CEE4A27381B4
 ```
 
----
-
-**At this step, 
-provide specific configuration for each container through `/master.d` and adjust values where it's needed or copy from `/default.d`!**
-
----
+> [!IMPORTANT]
+> At this step, 
+provide specific configuration for each container through `/master.d` and adjust values where it's needed or copy from `/default.d`!
 
 - Encrypt provided secrets using `sops` utility, example for `quickview` container:
 ```bash
@@ -130,3 +127,11 @@ especially for resource-intensive workloads or applications with high concurrenc
 `QUICKVIEW_MEMORY`: Argument sets the amount of memory (in megabytes) allocated to the cluster used by the application. 
 Allocating sufficient memory is essential for running applications smoothly, 
 especially those with memory-intensive operations.
+
+[^1]: https://docs.docker.com/engine/install/ubuntu/.
+[^2]: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/.
+[^3]: https://minikube.sigs.k8s.io/docs/start/.
+[^4]: https://helm.sh/docs/intro/install/.
+[^5]: https://medium.com/geekculture/helmfile-introduction-f63c42244dcc.
+[^6]: https://github.com/getsops/sops/releases/tag/v3.8.1.
+[^7]: https://blog.gitguardian.com/a-comprehensive-guide-to-sops/.
