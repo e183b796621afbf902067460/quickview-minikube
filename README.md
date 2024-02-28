@@ -67,6 +67,9 @@ kubectl get all --all-namespaces
 echo "$(minikube ip):32123"
 ```
 
+> [!NOTE]
+> Authorize using `admin` default username and password.
+
 # Configuration
 
 Another configuration can be provided depends on your system, 
