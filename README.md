@@ -68,7 +68,7 @@ echo "$(minikube ip):32123"
 ```
 
 > [!NOTE]
-> Authorize using `admin` default username and password.
+> Authorize using `admin` default credentials.
 
 # Configuration
 
